@@ -3,21 +3,89 @@
 
     ####GET COMPILED DB
 
-              compiledNFD<- read.csv(file = "formatting_condensed_db_export_2.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", ""),stringsAsFactors=FALSE)
+              compiledNFD<- read.csv(file = "formatting_condensed_db_export_4.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", ""),stringsAsFactors=FALSE)
               
               # na.strings=c("NA","NaN", " "), encoding = 'ASCI', fileEncoding='UTF-8') #import nutrition facts label database
 
-              compiledNFD[,c(5:7,13:104,123:124,141:250)] <- sapply(compiledNFD[,c(5:7,13:104,123:124,141:250)], as.numeric)
+              compiledNFD[,c(5:223)] <- sapply(compiledNFD[,c(5:223)], as.numeric)
               
               compiledNFD$NFL_Factor= 100/(as.numeric(compiledNFD$Weight_per_serving_g))
               
-              compiledNFD[,c(14:104,123:124,141:250)]=as.numeric(apply( compiledNFD[,c(14:104,123:124,141:250)], 2, function(x) x *  compiledNFD$NFL_Factor))
+              ###DAILY VALUE CALCULATIONS ---> this code chunk takes daily value percentages and multiplies them by the weight of the daily value from 
+              #http://www.fda.gov/Food/GuidanceRegulation/GuidanceDocumentsRegulatoryInformation/LabelingNutrition/ucm064928.htm.
+              #The end result of the conversion is in the same units as the USDA unit for that nutrient
+              compiledNFD$Sodium_DV<-compiledNFD$Sodium_DV*2400
+              compiledNFD$Potassium_DV<-compiledNFD$Potassium_DV*3500
+              compiledNFD$Vitamin_A_DV<-compiledNFD$Vitamin_A_DV*5000
+              compiledNFD$Vitamin_C_DV<-compiledNFD$Vitamin_C_DV*60
+              compiledNFD$Calcium_DV<-compiledNFD$Calcium_DV*1000
+              compiledNFD$Iron_DV<-compiledNFD$Iron_DV*18
+              compiledNFD$Vitamin_E_DV<-compiledNFD$Vitamin_E_DV*30
+              compiledNFD$Thiamin_DV<-compiledNFD$Thiamin_DV*1.5
+              compiledNFD$Riboflavin_DV<-compiledNFD$Riboflavin_DV*1.7
+              compiledNFD$Niacin_DV<-compiledNFD$Niacin_DV*20
+              compiledNFD$Vitamin_B6_DV<-compiledNFD$Vitamin_B6_DV*2
+              compiledNFD$Vitamin_B12_DV<-compiledNFD$Vitamin_B12_DV*6
+              compiledNFD$Zinc_DV<-compiledNFD$Zinc_DV*15
+              compiledNFD$Vitamin_D_DV<-compiledNFD$Vitamin_D_DV*400 * 0.025
+                  #vitamin D conversion from http://dietarysupplementdatabase.usda.nih.gov/ingredient_calculator/equation.php
+              compiledNFD$Phosphorus_DV<-compiledNFD$Phosphorus_DV*1000
+              compiledNFD$Magnesium_DV<-compiledNFD$Magnesium_DV*400
+              compiledNFD$Vitamin_K_DV<-compiledNFD$Vitamin_K_DV*80
+              compiledNFD$Folate_DV<-compiledNFD$Folate_DV*400
+              compiledNFD$Pantothenic_DV<-compiledNFD$Pantothenic_DV*10
+              compiledNFD$Copper_DV<-compiledNFD$Copper_DV*2
+              compiledNFD$Selenium_DV<-compiledNFD$Selenium_DV*70
+              compiledNFD$Manganese_DV<-compiledNFD$Manganese_DV*2
+              
+              compiledNFD$Biotin_DV<-compiledNFD$Biotin_DV*300
+              compiledNFD$Iodine_DV<-compiledNFD$Iodine_DV*150
+              compiledNFD$Chromium_DV<-compiledNFD$Chromium_DV*120
+              compiledNFD$Molybdenum_DV<-compiledNFD$Molybdenum_DV*75
+              compiledNFD$Chloride_DV<-compiledNFD$Chloride_DV*3400
+              
+              
+              ##USE MG IF AVAILABLE, ELSE USE DAILY VALUES
+              compiledNFD$Sodium_mg<-ifelse(!is.na(compiledNFD$Sodium_mg),compiledNFD$Sodium_mg,compiledNFD$Sodium_DV)
+              compiledNFD$Potassium_mg<-ifelse(!is.na(compiledNFD$Potassium_mg),compiledNFD$Potassium_mg,compiledNFD$Potassium_DV)
+              compiledNFD$Vitamin_A_mcg<-ifelse(!is.na(compiledNFD$Vitamin_A_mcg),compiledNFD$Vitamin_A_mcg,compiledNFD$Vitamin_A_DV)
+              compiledNFD$Vitamin_C_mg<-ifelse(!is.na(compiledNFD$Vitamin_C_mg),compiledNFD$Vitamin_C_mg,compiledNFD$Vitamin_C_DV)
+              compiledNFD$Calcium_mg<-ifelse(!is.na(compiledNFD$Calcium_mg),compiledNFD$Calcium_mg,compiledNFD$Calcium_DV)
+              compiledNFD$Iron_mg<-ifelse(!is.na(compiledNFD$Iron_mg),compiledNFD$Iron_mg,compiledNFD$Iron_DV)
+              compiledNFD$Vitamin_E_mg<-ifelse(!is.na(compiledNFD$Vitamin_E_mg),compiledNFD$Vitamin_E_mg,compiledNFD$Vitamin_E_DV)
+              compiledNFD$Thiamin_mg<-ifelse(!is.na(compiledNFD$Thiamin_mg),compiledNFD$Thiamin_mg,compiledNFD$Thiamin_DV)
+              compiledNFD$Riboflavin_mg<-ifelse(!is.na(compiledNFD$Riboflavin_mg),compiledNFD$Riboflavin_mg,compiledNFD$Riboflavin_DV)
+              compiledNFD$Niacin_mg<-ifelse(!is.na(compiledNFD$Niacin_mg),compiledNFD$Niacin_mg,compiledNFD$Niacin_DV)
+              compiledNFD$Vitamin_B6_mg<-ifelse(!is.na(compiledNFD$Vitamin_B6_mg),compiledNFD$Vitamin_B6_mg,compiledNFD$Vitamin_B6_DV)
+              compiledNFD$Vitamin_B12_mcg<-ifelse(!is.na(compiledNFD$Vitamin_B12_mcg),compiledNFD$Vitamin_B12_mcg,compiledNFD$Vitamin_B12_DV)
+              compiledNFD$Zinc_mg<-ifelse(!is.na(compiledNFD$Zinc_mg),compiledNFD$Zinc_mg,compiledNFD$Zinc_DV)
+              compiledNFD$Vitamin_D_mcg<-ifelse(!is.na(compiledNFD$Vitamin_D_mcg),compiledNFD$Vitamin_D_mcg,compiledNFD$Vitamin_D_DV)
+              compiledNFD$Phosphorus_mg<-ifelse(!is.na(compiledNFD$Phosphorus_mg),compiledNFD$Phosphorus_mg,compiledNFD$Phosphorus_DV)
+              compiledNFD$Magnesium_mg<-ifelse(!is.na(compiledNFD$Magnesium_mg),compiledNFD$Magnesium_mg,compiledNFD$Magnesium_DV)
+              compiledNFD$Vitamin_K_mcg<-ifelse(!is.na(compiledNFD$Vitamin_K_mcg),compiledNFD$Vitamin_K_mcg,compiledNFD$Vitamin_K_DV)
+              compiledNFD$Folate_mcg<-ifelse(!is.na(compiledNFD$Folate_mcg),compiledNFD$Folate_mcg,compiledNFD$Folate_DV)
+              compiledNFD$Pantothenic_mg<-ifelse(!is.na(compiledNFD$Pantothenic_mg),compiledNFD$Pantothenic_mg,compiledNFD$Pantothenic_DV)
+              compiledNFD$Copper_mcg<-ifelse(!is.na(compiledNFD$Copper_mcg),compiledNFD$Copper_mcg,compiledNFD$Copper_DV)
+              compiledNFD$Selenium_mcg<-ifelse(!is.na(compiledNFD$Selenium_mcg),compiledNFD$Selenium_mcg,compiledNFD$Selenium_DV)
+              compiledNFD$Manganese_mg<-ifelse(!is.na(compiledNFD$Manganese_mg),compiledNFD$Manganese_mg,compiledNFD$Manganese_DV)
+              compiledNFD$Choline_mg<-ifelse(!is.na(compiledNFD$Choline_mg),compiledNFD$Choline_mg,compiledNFD$Choline_DV)
+              compiledNFD$Biotin_mcg<-ifelse(!is.na(compiledNFD$Biotin_mcg),compiledNFD$Biotin_mcg,compiledNFD$Biotin_DV)
+              compiledNFD$Iodine_mcg<-ifelse(!is.na(compiledNFD$Iodine_mcg),compiledNFD$Iodine_mcg,compiledNFD$Iodine_DV)
+              compiledNFD$Chromium_mcg<-ifelse(!is.na(compiledNFD$Chromium_mcg),compiledNFD$Chromium_mcg,compiledNFD$Chromium_DV)
+              compiledNFD$Molybdenum_mcg<-ifelse(!is.na(compiledNFD$Molybdenum_mcg),compiledNFD$Molybdenum_mcg,compiledNFD$Molybdenum_DV)
+              compiledNFD$Chloride_mg<-ifelse(!is.na(compiledNFD$Chloride_mg),compiledNFD$Chloride_mg,compiledNFD$Chloride_DV)
+              
+              
+              
+              compiledNFD[,c(6:210)]=as.numeric(apply( compiledNFD[,c(6:210)], 2, function(x) x *  compiledNFD$NFL_Factor))
               # NFL[NFL==""] <- NA
               #Now it's all per 100 grams
+              library(plyr)
+              names(compiledNFD)[names(compiledNFD)=="NDID"] <- "PRODUCTNDID"
+
+                  ####GET REFERENCE BASE PRODUCT PROFILE DATABASE
               
-    ####GET REFERENCE BASE PRODUCT PROFILE DATABASE
-              
-              referenceBASEP<-readRDS(file = "reference_BASEP_based_on_12162015_compiledDB.rds")
+              referenceBASEP<-readRDS(file = "reference_BASEP_based_on_01122016_compiledDB.rds")
 
               
     For each food in NFD database (compiled< match food in reference dataabse, and merge the two)
@@ -25,7 +93,7 @@
     
     ####GRAND MERGED UNCALCULATED FOODOMICS UNREPLICATED
     
-    unCALC_unREPL_foodomicsDB<-merge(compiledNFD, referenceBASEP, by="New.NDID.Number")  #this is dropping things that don't have matches??????
+    unCALC_unREPL_foodomicsDB<-merge(compiledNFD, referenceBASEP, by="PRODUCTNDID")  #this is dropping things that don't have matches??????
     #rename for simplicity
     UCURdb<-unCALC_unREPL_foodomicsDB
     
@@ -103,12 +171,16 @@
    UCURdb$FNA_TYR_G<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Tyrosine_per_serving_g),UCURdb$Tyrosine_per_serving_g,UCURdb$PRO_conv*UCURdb$`X509`))
    UCURdb$FNA_VAL_G<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Valine_per_serving_g),UCURdb$Valine_per_serving_g,UCURdb$PRO_conv*UCURdb$`X510`))
     
-                         require(ggplot2)
-                         require(reshape)
-                         UCURmelt <- melt(UCURdb[,c(2,424:442)] ,  id.vars = 'Count', variable.name = 'Chemical')
+     require(plotly)                      
+     require(ggplot2)
+    require(reshape)
+                         UCURmelt <- melt(UCURdb[,c(2,397:415)] ,  id.vars = 'Count', variable.name = 'Chemical')
                          UCURmelt$Count<-as.numeric(UCURmelt$Count)
                          UCURmelt$value<-as.numeric(UCURmelt$value)
-                         ggplot(UCURmelt, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
+                         p<-ggplot(UCURmelt, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
+                         (gg <- ggplotly(p))
+                         plotly_POST(gg, filename = "amino_acid_foodomics", world_readable=TRUE)
+                         
     ################
     #FAT CONVERSIONS
     ################
@@ -132,20 +204,20 @@
    UCURdb$Sat_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Saturated_Fat_per_serving_g),UCURdb$Saturated_Fat_per_serving_g/UCURdb$`X606`,1)) 
     
     ######SFA
-   UCURdb$FNA_F4D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F4D0_per_serving_g),UCURdb$F4D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X607`),UCURdb$Sat_conv*UCURdb$`X607`,UCURdb$Fat_conv*UCURdb$`X607`))
-   UCURdb$FNA_F6D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F6D0_per_serving_g),UCURdb$F6D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X608`),UCURdb$Sat_conv*UCURdb$`X608`,UCURdb$Fat_conv*UCURdb$`X608`))
-   UCURdb$FNA_F8D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F8D0_per_serving_g),UCURdb$F8D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X609`),UCURdb$Sat_conv*UCURdb$`X609`,UCURdb$Fat_conv*UCURdb$`X609`))
-   UCURdb$FNA_F10D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F10D0_per_serving_g),UCURdb$F10D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X610`),UCURdb$Sat_conv*UCURdb$`X610`,UCURdb$Fat_conv*UCURdb$`X610`))
-   UCURdb$FNA_F12D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F12D0_per_serving_g),UCURdb$F12D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X611`),UCURdb$Sat_conv*UCURdb$`X611`,UCURdb$Fat_conv*UCURdb$`X611`))
-   UCURdb$FNA_F13D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F13D0_per_serving_g),UCURdb$F13D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X696`),UCURdb$Sat_conv*UCURdb$`X696`,UCURdb$Fat_conv*UCURdb$`X696`))
-   UCURdb$FNA_F14D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F14D0_per_serving_g),UCURdb$F14D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X612`),UCURdb$Sat_conv*UCURdb$`X612`,UCURdb$Fat_conv*UCURdb$`X612`))
-   UCURdb$FNA_F15D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F15D0_per_serving_g),UCURdb$F15D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X652`),UCURdb$Sat_conv*UCURdb$`X652`,UCURdb$Fat_conv*UCURdb$`X652`))
-   UCURdb$FNA_F16D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D0_per_serving_g),UCURdb$F16D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X613`),UCURdb$Sat_conv*UCURdb$`X613`,UCURdb$Fat_conv*UCURdb$`X613`))
-   UCURdb$FNA_F17D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F17D0_per_serving_g),UCURdb$F17D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X653`),UCURdb$Sat_conv*UCURdb$`X653`,UCURdb$Fat_conv*UCURdb$`X653`))
-   UCURdb$FNA_F18D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D0_per_serving_g),UCURdb$F18D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X614`),UCURdb$Sat_conv*UCURdb$`X614`,UCURdb$Fat_conv*UCURdb$`X614`))
-   UCURdb$FNA_F20D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D0_per_serving_g),UCURdb$F20D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X615`),UCURdb$Sat_conv*UCURdb$`X615`,UCURdb$Fat_conv*UCURdb$`X615`))
-   UCURdb$FNA_F22D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D0_per_serving_g),UCURdb$F22D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X624`),UCURdb$Sat_conv*UCURdb$`X624`,UCURdb$Fat_conv*UCURdb$`X624`))
-   UCURdb$FNA_F24D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D0_per_serving_g),UCURdb$F24D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X654`),UCURdb$Sat_conv*UCURdb$`X654`,UCURdb$Fat_conv*UCURdb$`X654`))
+   UCURdb$FNA_F4D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F4D0_per_serving_g),UCURdb$F4D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X607`),UCURdb$Sat_conv*UCURdb$`X607`,UCURdb$Fat_conv*UCURdb$`X607`)))
+   UCURdb$FNA_F6D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F6D0_per_serving_g),UCURdb$F6D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X608`),UCURdb$Sat_conv*UCURdb$`X608`,UCURdb$Fat_conv*UCURdb$`X608`)))
+   UCURdb$FNA_F8D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F8D0_per_serving_g),UCURdb$F8D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X609`),UCURdb$Sat_conv*UCURdb$`X609`,UCURdb$Fat_conv*UCURdb$`X609`)))
+   UCURdb$FNA_F10D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F10D0_per_serving_g),UCURdb$F10D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X610`),UCURdb$Sat_conv*UCURdb$`X610`,UCURdb$Fat_conv*UCURdb$`X610`)))
+   UCURdb$FNA_F12D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F12D0_per_serving_g),UCURdb$F12D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X611`),UCURdb$Sat_conv*UCURdb$`X611`,UCURdb$Fat_conv*UCURdb$`X611`)))
+   UCURdb$FNA_F13D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F13D0_per_serving_g),UCURdb$F13D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X696`),UCURdb$Sat_conv*UCURdb$`X696`,UCURdb$Fat_conv*UCURdb$`X696`)))
+   UCURdb$FNA_F14D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F14D0_per_serving_g),UCURdb$F14D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X612`),UCURdb$Sat_conv*UCURdb$`X612`,UCURdb$Fat_conv*UCURdb$`X612`)))
+   UCURdb$FNA_F15D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F15D0_per_serving_g),UCURdb$F15D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X652`),UCURdb$Sat_conv*UCURdb$`X652`,UCURdb$Fat_conv*UCURdb$`X652`)))
+   UCURdb$FNA_F16D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D0_per_serving_g),UCURdb$F16D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X613`),UCURdb$Sat_conv*UCURdb$`X613`,UCURdb$Fat_conv*UCURdb$`X613`)))
+   UCURdb$FNA_F17D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F17D0_per_serving_g),UCURdb$F17D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X653`),UCURdb$Sat_conv*UCURdb$`X653`,UCURdb$Fat_conv*UCURdb$`X653`)))
+   UCURdb$FNA_F18D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D0_per_serving_g),UCURdb$F18D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X614`),UCURdb$Sat_conv*UCURdb$`X614`,UCURdb$Fat_conv*UCURdb$`X614`)))
+   UCURdb$FNA_F20D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D0_per_serving_g),UCURdb$F20D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X615`),UCURdb$Sat_conv*UCURdb$`X615`,UCURdb$Fat_conv*UCURdb$`X615`)))
+   UCURdb$FNA_F22D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D0_per_serving_g),UCURdb$F22D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X624`),UCURdb$Sat_conv*UCURdb$`X624`,UCURdb$Fat_conv*UCURdb$`X624`)))
+   UCURdb$FNA_F24D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D0_per_serving_g),UCURdb$F24D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X654`),UCURdb$Sat_conv*UCURdb$`X654`,UCURdb$Fat_conv*UCURdb$`X654`)))
     
                    UCURmeltSFA <- melt(UCURdb[,c(2,452:465)] ,  id.vars = 'Count', variable.name = 'Chemical')
                    UCURmeltSFA$Count<-as.numeric(UCURmeltSFA$Count)
@@ -209,6 +281,7 @@
    UCURdb$FNA_FATRNM<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNM_per_serving_g),UCURdb$FATRNM_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X693`),UCURdb$Trans_conv*UCURdb$`X693`,UCURdb$Fat_conv*UCURdb$`X693`)))
    UCURdb$FNA_FATRNP<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNP_per_serving_g),UCURdb$FATRNP_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X695`),UCURdb$Trans_conv*UCURdb$`X695`,UCURdb$Fat_conv*UCURdb$`X695`)))
 
+   library(reshape)
              UCURmeltTFA <- melt(UCURdb[,c(2,493:504)] ,  id.vars = 'Count', variable.name = 'Chemical')
              UCURmeltTFA$Count<-as.numeric(UCURmeltTFA$Count)
              UCURmeltTFA$value<-as.numeric(UCURmeltTFA$value)
@@ -303,4 +376,34 @@
     
     saveRDS(foodomics, file="foodomicsDB.rds")
     
+    ###########GRAPHING VARIOUS FOODOMIC PARAMETERS
+    library(ggplot2)
+    library(reshape2)
+    pufa<-c(449:464)
+    mufa<-c(438:448)
+    sfa<-c(424:437)
+    tfa<-c(465:476)
+    cho<-c(385:396)
+    pro<-c(397:415)
     
+    UCURmeltOTHER <- melt(UCURdb[,c(2,sfa)] ,  id.vars = 'Count', variable.name = 'Chemical')
+    UCURmeltOTHER$Count<-as.numeric(UCURmeltOTHER$Count)
+    UCURmeltOTHER$value<-as.numeric(UCURmeltOTHER$value)
+    ggplot(UCURmeltOTHER, aes(Count,value)) + geom_point() + facet_wrap(~Chemical, ncol = 10)
+    
+    #Obtain outliers
+    outliers = boxplot(UCURdb$FNA_F8D0)$out
+    UCURdb[UCURdb$FNA_F8D0 %in% outliers,]
+    
+    
+    
+    ####Add in Category 1
+    cat<-read.csv(file="NDID_cat1_year.txt", sep="\t", header=TRUE)
+    foodomics2<-merge(cat, UCURdb, by=c("PRODUCTNDID", "Year"))
+    
+    subset<-subset(foodomics2[,c(4:5,sfa)], foodomics2$Category_1=="Sauces_Soups_Condiments_Dressing")
+    UCURmeltOTHER <- melt(subset,  id.vars = 'Count', variable.name = 'Chemical')
+    UCURmeltOTHER$Count<-as.numeric(UCURmeltOTHER$Count)
+    UCURmeltOTHER$value<-as.numeric(UCURmeltOTHER$value)
+    UCURmeltOTHER2<-merge(foodomics2[,c("Count", "Product_Name")])
+    ggplot(UCURmeltOTHER2, aes(Count,value), label = UCURmeltOTHER2$Product_Name) + geom_point() + facet_wrap(~variable, ncol = 10) 

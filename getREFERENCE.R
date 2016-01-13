@@ -1,12 +1,13 @@
-#Average the data in preSCALING PER PRODUCT except where values are NA then just use value
+#Sum the data in preSCALING PER PRODUCT except where values are NA then just use value
 #First get rid of columns that we don't need
 preSCALING2<-preSCALING[,c(2,7:156)]
 library(magrittr)
 library(dplyr)
-referenceBASEP<- preSCALING2%>% group_by(New.NDID.Number) %>% summarise_each(funs(mean))
+referenceBASEP<- preSCALING2 %>% group_by(PRODUCTNDID) %>% summarise_each(funs(sum))
 
-saveRDS(referenceBASEP, file="reference_BASEP_based_on_12162015_compiledDB.rds")
+saveRDS(referenceBASEP, file="reference_BASEP_based_on_01122016_compiledDB.rds")
 
+write.csv(referenceBASEP, file="reference_BASEP_based_on_01122016_compiledDB.csv")
 
 
 
