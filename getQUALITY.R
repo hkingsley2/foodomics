@@ -21,10 +21,6 @@ ggplot(subsetMelt, aes(x = Category_1, y = value, group=Chemical, color=Chemical
 
 
 
-is_outlier <- function(x) {
-  x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x)
-}
-
 outliers<-compiledNFD2[is_outlier(!is.na(grams_Pro_per_100g)),]
 
 compiledNFD2 %>%
@@ -76,15 +72,50 @@ ggplot(UCURmeltOTHER2, aes(Count,value), label = UCURmeltOTHER2$Product_Name) + 
 
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
+subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Pro_per_100g")
+ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
+  theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Protein Percentage in BNFD") + theme(strip.text = element_text(size=6))
+ggsave(file="0132016_Baby_Food_Pro_2.png")
+
+subsetMelt$Year<-as.numeric(subsetMelt$Year)
 subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Cho_per_100g")
 ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
-  theme(axis.text.x = element_text(angle=90)) + ggtitle("Baby Food Carbohydate Percentage in BNFD")
+  theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Carbohydate Percentage in BNFD") + theme(strip.text = element_text(size=6))
+ggsave(file="0132016_Baby_Food_Cho_2.png")
 
+subsetMelt$Year<-as.numeric(subsetMelt$Year)
+subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Fat_per_100g")
+ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
+  theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Fat Percentage in BNFD") + theme(strip.text = element_text(size=6))
+ggsave(file="0132016_Baby_Food_Fat_2.png")
 
 
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
-subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Fat_per_100g")
+subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Pro_per_100g")
 ggplot(subsetMeltcho, aes(x=PRODUCTNDID,y=value)) + geom_boxplot(outlier.colour="red", outlier.shape=8)  +
-  theme(axis.text.x = element_text(angle=90)) + ggtitle("Baby Food Fat Percentage in BNFD")
+  theme(axis.text.x = element_text(angle=90, hjust = .1)) + ggtitle("Baby Food Pro Percentage in BNFD")
+ggsave(file="0132016_Baby_Food_Pro.png")
+
+
+
+######Trying to Figure out how to calculate some column summary stats - these will be applied over all subsets of the database (categories)
+
+
+is_outlier <- function(x) {
+  x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x)
+}
+
+library(plyr)
+Baby_food_macro_stats <- ddply(subsetMeltcho, c("PRODUCTNDID"), summarise, 
+mean = mean(!is.na(value)) ,
+sd = sd(!is.na(value)) ,
+median = median(!is.na(value)) ,
+minimum = min(!is.na(value)) ,
+maximum = max(!is.na(value)) ,
+s.size = length(!is.na(value)),
+lower.bound = quantile(!is.na(value), 0.25) * IQR(!is.na(value)),
+upper.bound = quantile(!is.na(value), 0.75) * IQR(!is.na(value))
+) 
+
 
