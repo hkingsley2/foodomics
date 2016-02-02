@@ -21,79 +21,20 @@
               #Remove supplements from the NFD
               compiledNFD<-subset(compiledNFD, !compiledNFD$Category_1=="Supplement")
               
+              #Store baby foods separately
+              baby_foods<-subset(compiledNFD, compiledNFD$Category_1=="Baby_Foods")
+              
+              #Remove baby foods from the NFD
+              compiledNFD<-subset(compiledNFD, !compiledNFD$Category_1=="Baby_Foods")
+              
               #Calculate a factor that we can use to convert all profiles to per 100 grams
               compiledNFD$NFL_Factor= 100/(as.numeric(compiledNFD$Weight_per_serving_g))
               
-###############################
-#####TRANSLATE DAILY VALUES####
-###############################
+              #Translate daily values
+              source("transDV.R")
               
-              ###DAILY VALUE CALCULATIONS ---> this code chunk takes daily value percentages and multiplies them by the weight of the daily value from 
-              #http://www.fda.gov/Food/GuidanceRegulation/GuidanceDocumentsRegulatoryInformation/LabelingNutrition/ucm064928.htm.
-              #The end result of the conversion is in the same units as the USDA unit for that nutrient
-              compiledNFD$Sodium_DV<-compiledNFD$Sodium_DV*2400/100
-              compiledNFD$Potassium_DV<-compiledNFD$Potassium_DV*3500/100
-              compiledNFD$Vitamin_A_DV<-compiledNFD$Vitamin_A_DV*5000/100
-              compiledNFD$Vitamin_C_DV<-compiledNFD$Vitamin_C_DV*60/100
-              compiledNFD$Calcium_DV<-compiledNFD$Calcium_DV*1000/100
-              compiledNFD$Iron_DV<-compiledNFD$Iron_DV*18/100
-              compiledNFD$Vitamin_E_DV<-compiledNFD$Vitamin_E_DV*30/100
-              compiledNFD$Thiamin_DV<-compiledNFD$Thiamin_DV*1.5/100
-              compiledNFD$Riboflavin_DV<-compiledNFD$Riboflavin_DV*1.7/100
-              compiledNFD$Niacin_DV<-compiledNFD$Niacin_DV*20/100
-              compiledNFD$Vitamin_B6_DV<-compiledNFD$Vitamin_B6_DV*2/100
-              compiledNFD$Vitamin_B12_DV<-compiledNFD$Vitamin_B12_DV*6/100
-              compiledNFD$Zinc_DV<-compiledNFD$Zinc_DV*15/100
-              compiledNFD$Vitamin_D_DV<-compiledNFD$Vitamin_D_DV*400 * 0.025/100
-                  #vitamin D conversion from http://dietarysupplementdatabase.usda.nih.gov/ingredient_calculator/equation.php
-              compiledNFD$Phosphorus_DV<-compiledNFD$Phosphorus_DV*1000/100
-              compiledNFD$Magnesium_DV<-compiledNFD$Magnesium_DV*400/100
-              compiledNFD$Vitamin_K_DV<-compiledNFD$Vitamin_K_DV*80/100
-              compiledNFD$Folate_DV<-compiledNFD$Folate_DV*400/100
-              compiledNFD$Pantothenic_DV<-compiledNFD$Pantothenic_DV*10/100
-              compiledNFD$Copper_DV<-compiledNFD$Copper_DV*2/100
-              compiledNFD$Selenium_DV<-compiledNFD$Selenium_DV*70/100
-              compiledNFD$Manganese_DV<-compiledNFD$Manganese_DV*2/100
-              
-              compiledNFD$Biotin_DV<-compiledNFD$Biotin_DV*300/100
-              compiledNFD$Iodine_DV<-compiledNFD$Iodine_DV*150/100
-              compiledNFD$Chromium_DV<-compiledNFD$Chromium_DV*120/100
-              compiledNFD$Molybdenum_DV<-compiledNFD$Molybdenum_DV*75/100
-              compiledNFD$Chloride_DV<-compiledNFD$Chloride_DV*3400/100
-              
-#############################################
-#####USE DV/milligram DAILY VALUE AMOUNTS####
-#############################################
-              
-              ##USE MG IF AVAILABLE, ELSE USE DAILY VALUES
-              compiledNFD$Sodium_mg<-ifelse(!is.na(compiledNFD$Sodium_mg),compiledNFD$Sodium_mg,compiledNFD$Sodium_DV)
-              compiledNFD$Potassium_mg<-ifelse(!is.na(compiledNFD$Potassium_mg),compiledNFD$Potassium_mg,compiledNFD$Potassium_DV)
-              compiledNFD$Vitamin_A_mcg<-ifelse(!is.na(compiledNFD$Vitamin_A_mcg),compiledNFD$Vitamin_A_mcg,compiledNFD$Vitamin_A_DV)
-              compiledNFD$Vitamin_C_mg<-ifelse(!is.na(compiledNFD$Vitamin_C_mg),compiledNFD$Vitamin_C_mg,compiledNFD$Vitamin_C_DV)
-              compiledNFD$Calcium_mg<-ifelse(!is.na(compiledNFD$Calcium_mg),compiledNFD$Calcium_mg,compiledNFD$Calcium_DV)
-              compiledNFD$Iron_mg<-ifelse(!is.na(compiledNFD$Iron_mg),compiledNFD$Iron_mg,compiledNFD$Iron_DV)
-              compiledNFD$Vitamin_E_mg<-ifelse(!is.na(compiledNFD$Vitamin_E_mg),compiledNFD$Vitamin_E_mg,compiledNFD$Vitamin_E_DV)
-              compiledNFD$Thiamin_mg<-ifelse(!is.na(compiledNFD$Thiamin_mg),compiledNFD$Thiamin_mg,compiledNFD$Thiamin_DV)
-              compiledNFD$Riboflavin_mg<-ifelse(!is.na(compiledNFD$Riboflavin_mg),compiledNFD$Riboflavin_mg,compiledNFD$Riboflavin_DV)
-              compiledNFD$Niacin_mg<-ifelse(!is.na(compiledNFD$Niacin_mg),compiledNFD$Niacin_mg,compiledNFD$Niacin_DV)
-              compiledNFD$Vitamin_B6_mg<-ifelse(!is.na(compiledNFD$Vitamin_B6_mg),compiledNFD$Vitamin_B6_mg,compiledNFD$Vitamin_B6_DV)
-              compiledNFD$Vitamin_B12_mcg<-ifelse(!is.na(compiledNFD$Vitamin_B12_mcg),compiledNFD$Vitamin_B12_mcg,compiledNFD$Vitamin_B12_DV)
-              compiledNFD$Zinc_mg<-ifelse(!is.na(compiledNFD$Zinc_mg),compiledNFD$Zinc_mg,compiledNFD$Zinc_DV)
-              compiledNFD$Vitamin_D_mcg<-ifelse(!is.na(compiledNFD$Vitamin_D_mcg),compiledNFD$Vitamin_D_mcg,compiledNFD$Vitamin_D_DV)
-              compiledNFD$Phosphorus_mg<-ifelse(!is.na(compiledNFD$Phosphorus_mg),compiledNFD$Phosphorus_mg,compiledNFD$Phosphorus_DV)
-              compiledNFD$Magnesium_mg<-ifelse(!is.na(compiledNFD$Magnesium_mg),compiledNFD$Magnesium_mg,compiledNFD$Magnesium_DV)
-              compiledNFD$Vitamin_K_mcg<-ifelse(!is.na(compiledNFD$Vitamin_K_mcg),compiledNFD$Vitamin_K_mcg,compiledNFD$Vitamin_K_DV)
-              compiledNFD$Folate_mcg<-ifelse(!is.na(compiledNFD$Folate_mcg),compiledNFD$Folate_mcg,compiledNFD$Folate_DV)
-              compiledNFD$Pantothenic_mg<-ifelse(!is.na(compiledNFD$Pantothenic_mg),compiledNFD$Pantothenic_mg,compiledNFD$Pantothenic_DV)
-              compiledNFD$Copper_mcg<-ifelse(!is.na(compiledNFD$Copper_mcg),compiledNFD$Copper_mcg,compiledNFD$Copper_DV)
-              compiledNFD$Selenium_mcg<-ifelse(!is.na(compiledNFD$Selenium_mcg),compiledNFD$Selenium_mcg,compiledNFD$Selenium_DV)
-              compiledNFD$Manganese_mg<-ifelse(!is.na(compiledNFD$Manganese_mg),compiledNFD$Manganese_mg,compiledNFD$Manganese_DV)
-              compiledNFD$Choline_mg<-ifelse(!is.na(compiledNFD$Choline_mg),compiledNFD$Choline_mg,compiledNFD$Choline_DV)
-              compiledNFD$Biotin_mcg<-ifelse(!is.na(compiledNFD$Biotin_mcg),compiledNFD$Biotin_mcg,compiledNFD$Biotin_DV)
-              compiledNFD$Iodine_mcg<-ifelse(!is.na(compiledNFD$Iodine_mcg),compiledNFD$Iodine_mcg,compiledNFD$Iodine_DV)
-              compiledNFD$Chromium_mcg<-ifelse(!is.na(compiledNFD$Chromium_mcg),compiledNFD$Chromium_mcg,compiledNFD$Chromium_DV)
-              compiledNFD$Molybdenum_mcg<-ifelse(!is.na(compiledNFD$Molybdenum_mcg),compiledNFD$Molybdenum_mcg,compiledNFD$Molybdenum_DV)
-              compiledNFD$Chloride_mg<-ifelse(!is.na(compiledNFD$Chloride_mg),compiledNFD$Chloride_mg,compiledNFD$Chloride_DV)
+              #Put baby foods back into the main database
+              compiledNFD<-rbind(compiledNFD,baby_foods)
               
 #########################
 #####MAYBE GET RID OF####
