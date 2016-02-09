@@ -80,8 +80,7 @@
 ############BABY FOODS#########
 ###############################      
 
-      #NOTE: Reference Values for Nutrition Labeling for Children Less Than 4 Years of Age
-      #NOTE: If value for less Than 4 is not available, uses values above for greater than 4 years of age
+      #NOTE: Reference Values for Nutrition Labeling for Infants
       
       ###############################
       #####TRANSLATE DAILY VALUES####

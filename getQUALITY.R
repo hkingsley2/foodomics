@@ -1,22 +1,74 @@
 #getQUALITY.R
 #Looks at the quality of the Brand Name Food Database
+
+#(1)
+#Import the files and do some cleaning up
+library("reshape")
 cat<-read.csv(file="NDID_cat1_year.txt", sep="\t", header=TRUE)
+cat<-cat[,c(2:3)]
+cat<-unique(cat)
+compiledNFD<- read.csv(file = "TRANSLATING_BNFD_TO_R_DB.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", ""),stringsAsFactors=FALSE)
+cat$PRODUCTNDID<-as.character(cat$PRODUCTNDID)
+
+#(2) 
+#Rename the Product NDID column
 names(compiledNFD)[names(compiledNFD)=="NDID"] <- "PRODUCTNDID"
-compiledNFD2<-merge(cat, compiledNFD, by=c("PRODUCTNDID", "Year"))
+
+#(3)
+#Get only REAL PRODUCTS THAT ARE NOT DUPLICATED
+wo_duplicates_orname<-unique(compiledNFD[,-c(1:3,5:9,13,100:114)])
+wo_duplicates_orname2<-merge(wo_duplicates_orname,cat, by=c("PRODUCTNDID"), drop=TRUE)
+
+#(4)
+#Subset to just a USDA category
+subset<-subset(wo_duplicates_orname2[,c(1:15,18,24,223)], wo_duplicates_orname2$Category_1=="Sweets")
+subset[,c(2:18)] <- sapply(subset[,c(2:18)], as.numeric)
+subsetMelt <- melt(subset,  id.vars = c('PRODUCTNDID', 'Category_1'))
+
+#(5)
+#Now create subsets for specific variables
+subsetMelt_Calssvg<-subsetMelt[subsetMelt$variable=="Carbohydrate_per_serving_g",]
+subsetMelt_Calssvg$value<-as.numeric(subsetMelt_Calssvg$value)
+
+#(6)
+#Plot the data
+library(ggplot2)
+
+#for outliers
+ggplot(subsetMelt_Calssvg, aes(x=PRODUCTNDID,y=value)) + geom_boxplot(outlier.colour="red", outlier.shape=8)  +
+  theme(axis.text.x = element_text(angle=90, vjust=.8, hjust=0.8)) + ggtitle("Carbohydrate per Serving in BNFD")
+
+
+
+
+
+
+#for fun
+ggplot(subsetMelt_CHO, aes(x = NDID, y = value, group=NDID, color=NDID), label = subsetMelt$Product_Name) + geom_boxplot()
+
+
+
+
+
+
+
+
+
 
 #How many unique brand name products are in the BNFD
-length(unique(compiledNFD$NDID))
+length(unique(compiledNFD2$PRODUCTNDID))
 
 #Macronutrients
 
 #What are summary stats for Total Protein per 100g of the product
 library(dplyr)
 library(ggplot2)
+library(reshape)
+compiledNFD2<-as.data.frame(compiledNFD2[,c(1:15)])
+subset<-subset(compiledNFD2[,c(1:15)], compiledNFD2$Category_1=="Baby_Foods")
 
-compiledNFD2<-as.data.frame(compiledNFD2[,c(1:8)])
-subset<-subset(compiledNFD2[,c(1:8)], compiledNFD2$Category_1=="Baby_Foods")
+subsetMelt <- melt(subset,  id.vars = c('PRODUCTNDID','Year', 'Count', 'Category_1', 'Product_Name'))
 
-subsetMelt <- melt(subset,  id.vars = c('PRODUCTNDID','Year', 'Count', 'Category_1', 'Product_Name'), variable.name = 'Chemical')
 ggplot(subsetMelt, aes(x = Category_1, y = value, group=Chemical, color=Chemical), label = subsetMelt$Product_Name) + geom_boxplot()
 
 
@@ -72,19 +124,19 @@ ggplot(UCURmeltOTHER2, aes(Count,value), label = UCURmeltOTHER2$Product_Name) + 
 
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
-subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Pro_per_100g")
+subsetMeltcho<-subset(subsetMelt, subsetMelt$variable=="grams_Pro_per_100g")
 ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
   theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Protein Percentage in BNFD") + theme(strip.text = element_text(size=6))
 ggsave(file="0132016_Baby_Food_Pro_2.png")
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
-subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Cho_per_100g")
+subsetMeltcho<-subset(subsetMelt, subsetMelt$variable=="grams_Cho_per_100g")
 ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
   theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Carbohydate Percentage in BNFD") + theme(strip.text = element_text(size=6))
 ggsave(file="0132016_Baby_Food_Cho_2.png")
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
-subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Fat_per_100g")
+subsetMeltcho<-subset(subsetMelt, subsetMelt$variable=="grams_Fat_per_100g")
 ggplot(subsetMeltcho, aes(x="",y=value, color=factor(Year))) + geom_point() + facet_wrap(~PRODUCTNDID, ncol = 30) +
   theme(axis.text.x = element_text(angle=90, hjust = 1)) + ggtitle("Baby Food Fat Percentage in BNFD") + theme(strip.text = element_text(size=6))
 ggsave(file="0132016_Baby_Food_Fat_2.png")
@@ -92,11 +144,24 @@ ggsave(file="0132016_Baby_Food_Fat_2.png")
 
 
 subsetMelt$Year<-as.numeric(subsetMelt$Year)
-subsetMeltcho<-subset(subsetMelt, subsetMelt$Chemical=="grams_Pro_per_100g")
+subsetMeltcho<-subset(subsetMelt, subsetMelt$variable=="grams_Pro_per_100g")
 ggplot(subsetMeltcho, aes(x=PRODUCTNDID,y=value)) + geom_boxplot(outlier.colour="red", outlier.shape=8)  +
   theme(axis.text.x = element_text(angle=90, hjust = .1)) + ggtitle("Baby Food Pro Percentage in BNFD")
 ggsave(file="0132016_Baby_Food_Pro.png")
 
+
+subsetMelt$Year<-as.numeric(subsetMelt$Year)
+subsetMeltcho<-subset(subsetMelt, subsetMelt$variable=="Calories_per_serving_kcal")
+ggplot(subsetMeltcho, aes(x=PRODUCTNDID,y=value)) + geom_boxplot(outlier.colour="red", outlier.shape=8)  +
+  theme(axis.text.x = element_text(angle=90, vjust=.8, hjust=0.8)) + ggtitle("Baby Food Calories_per_serving_kcal in BNFD")
+ggsave(file="0132016_Baby_Calories_per_serving_kcal.png")
+
+
+
+
+subsetMelt$PRODUCTNDIDYEAR<-paste0(subsetMelt$PRODUCTNDID,subsetMelt$Year, sep="_")
+c <- ggplot(subsetMelt, aes(x = PRODUCTNDIDYEAR, y = value, fill = variable))
+c + geom_bar(stat = "identity")
 
 
 ######Trying to Figure out how to calculate some column summary stats - these will be applied over all subsets of the database (categories)

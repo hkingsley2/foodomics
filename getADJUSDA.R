@@ -1,7 +1,6 @@
 #getADJUSDA
 #####HERE NEED TO MAKE IT SUCH THAT THE PROFILE DATA ARE ACTUALLY CORRECT (IF FAT IS 0, then all fat sub-classes are 0)
 
-
 ################
 #CHO CONVERSIONS
 ################
