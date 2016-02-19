@@ -39,11 +39,12 @@
               
               #(5)
               #Subset USDA profile database to list of IDS in condensedUSDAweightedNFD
-              USDAmod = USDA[USDA$NDB_No %in% condensedUSDAweightedNFD$USDAID, ] 
+              USDAmod = USDA[USDA$NDB_No %in% condensedUSDAweightedNFD$USDA.ID, ] 
               
               library(plyr)
               #rename the USDAID column to NDB_No because that is what it is called in the USDAmod sheet
-              condensedUSDAweightedNFD<-rename(condensedUSDAweightedNFD, c("USDAID"="NDB_No"))
+              condensedUSDAweightedNFD$NDB_No<-condensedUSDAweightedNFD$USDA.ID
+              condensedUSDAweightedNFD<-condensedUSDAweightedNFD[,c(-2)]
               
               #Merge this database back with the condensed database to have everything in one sheet
               preSCALING <- merge(condensedUSDAweightedNFD,USDAmod, by="NDB_No")
@@ -54,13 +55,13 @@
               
               #(6)
               #multiply values by weighting factor
-              preSCALING[,c(7:156)]<-preSCALING[,c(7:156)] * preSCALING[,c(5)]
+              preSCALING[,c(7:160)]<-preSCALING[,c(7:160)] * preSCALING[,c(5)]
               
               #(7) 
               #Now, we need to sum the data for the representative products for each NDID that they belong to
               #Sum the data in preSCALING PER PRODUCT except where values are NA then just use value
               #First get rid of columns that we don't need
-              preSCALING2<-preSCALING[,c(2,7:156)]
+              preSCALING2<-preSCALING[,c(2,7:156,160)]
               library(magrittr)
               library(dplyr)
               referenceBASEP<- preSCALING2 %>% group_by(PRODUCTNDID) %>% summarise_each(funs(sum))

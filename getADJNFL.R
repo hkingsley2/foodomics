@@ -3,11 +3,11 @@
 #####################
               
               #GET HISTORICAL NUTRITION FACTS DATABASE
-              setwd("~/GitHub/foodomics")
+              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
               compiledNFD<- read.csv(file = "TRANSLATING_BNFD_TO_R.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", "NULL"),stringsAsFactors=FALSE)
-              
+                            
               #GET REFERENCE BASE PRODUCT PROFILE DATABASE
-              setwd("Z:/MySQL Database/Diet/Reference_Tables")
+              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
               referenceBASEP<-readRDS(file = "reference_BASEP_based_on_02022016_compiledDB.rds")
 
 ###############################################
@@ -21,7 +21,7 @@
               supplements<-subset(compiledNFD, compiledNFD$Category_1=="Supplement")
               
               #Remove supplements from the NFD
-              compiledNFD<-subset(compiledNFD, !compiledNFD$Category_1=="Supplements")
+              compiledNFD<-subset(compiledNFD, !compiledNFD$Category_1=="Supplement")
               
               #Calculate a factor that we can use to convert all profiles to per 100 grams
               compiledNFD$NFL_Factor= 100/(as.numeric(compiledNFD$Weight_per_serving_g))
@@ -43,7 +43,7 @@
 #####MAYBE GET RID OF####
 #########################
               
-              compiledNFD[,c(12:32,61:96, 116:242)]=as.numeric(apply( compiledNFD[,c(12:32,61:96, 116:242)], 2, function(x) x *  compiledNFD$NFL_Factor))
+              compiledNFD[,c(12:32,61:96, 116:241)]=as.numeric(apply( compiledNFD[,c(12:32,61:96, 116:241)], 2, function(x) x *  compiledNFD$NFL_Factor))
               # NFL[NFL==""] <- NA
               #Now it's all per 100 grams
               names(compiledNFD)[names(compiledNFD)=="NDID"] <- "PRODUCTNDID"
@@ -65,16 +65,17 @@
               UCURdb$CHObyCAL <- ((((UCURdb$Calories_per_serving_kcal/100)* 100) - (((UCURdb$Total_Fat_per_serving_g/100)*100)*9) - (((UCURdb$Protein_per_serving_g/100)*100)*4))/4)
               UCURdb$CHObyWEIGHT <- ifelse(UCURdb$Carbohydrate_per_serving_g=="0" | UCURdb$Weight_per_serving=="0", 0, ((UCURdb$Carbohydrate_per_serving_g/100)*100))
               UCURdb$CHOdec<- ifelse(UCURdb$CHObyCAL>UCURdb$CHObyWEIGHT,UCURdb$CHObyCAL,UCURdb$CHObyWEIGHT)
+              UCURdb$CHOdec<- ifelse(UCURdb$CHOdec>100,100,UCURdb$CHOdec)
               
               #DEFINE FACTOR (VALUE ON NFL DIVIDED BY VALUE IN USDA)
               UCURdb$Fat_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`),UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`,1))  #this should be fat from label
               UCURdb$PRO_conv<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Protein_per_serving_g/UCURdb$`X203`),UCURdb$Protein_per_serving_g/UCURdb$`X203`,1))   #this should be pro frmo label
-              UCURdb$CHO_conv<-ifelse(UCURdb$CHOdec=="0",0,ifelse(!is.na(UCURdb$CHOdec/UCURdb$`X205`), UCURdb$CHOdec/UCURdb$`X205`,1)) #this should be adjusted carbohydate
+              UCURdb$CHO_conv<-ifelse(UCURdb$CHOdec=="0",0,ifelse(!is.na(UCURdb$CHOdec/UCURdb$CHOdec2), UCURdb$CHOdec/UCURdb$CHOdec2,1)) #this should be adjusted carbohydate
               
               ###Macronutrient Rule: if NFL data are non-NA, use NFL data, else, use USDA data
               UCURdb$FNA_PROCNT<-ifelse(!is.na(UCURdb$Protein_per_serving_g),UCURdb$Protein_per_serving_g,UCURdb$`X203`)
               UCURdb$FNA_FAT<-ifelse(!is.na(UCURdb$Total_Fat_per_serving_g),UCURdb$Total_Fat_per_serving_g,UCURdb$`X204`)
-              UCURdb$FNA_CHOCDF<-ifelse(!is.na(UCURdb$CHOdec),UCURdb$CHOdec,UCURdb$`X205`)
+              UCURdb$FNA_CHOCDF<-ifelse(!is.na(UCURdb$CHOdec),UCURdb$CHOdec,UCURdb$CHOdec2)
               UCURdb$FNA_ENERC_KCAL<-ifelse(!is.na(UCURdb$Calories_per_serving_kcal),UCURdb$Calories_per_serving_kcal,UCURdb$`X208`)
               is.na(UCURdb) <- do.call(cbind,lapply(UCURdb, is.infinite))
               ###Macronutrient Sub-Class Rule: if NFL data for sub-class are non-NA, use NFL sub-class data, else, use NFL macronutrient data factor for sub-class
@@ -196,6 +197,11 @@
               UCURdb$FNA_F22D5<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D5_per_serving_g),UCURdb$F22D5_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X631`),UCURdb$Poly_conv*UCURdb$`X631`,UCURdb$Fat_conv*UCURdb$`X631`)))
               UCURdb$FNA_F22D6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$DHA_per_serving_g),UCURdb$DHA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X621`),UCURdb$Poly_conv*UCURdb$`X621`,UCURdb$Fat_conv*UCURdb$`X621`)))
               
+              UCURdb$FNA_F183I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F183I_per_serving_g),UCURdb$F183I_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X856`),UCURdb$Poly_conv*UCURdb$`X856`,UCURdb$Fat_conv*UCURdb$`X856`)))
+              UCURdb$FNA_F182I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F182I_per_serving_g),UCURdb$F182I_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X666`),UCURdb$Poly_conv*UCURdb$`X666`,UCURdb$Fat_conv*UCURdb$`X666`)))
+              UCURdb$FNA_F18D2CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CN6_per_serving_g),UCURdb$F18D2CN6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X675`),UCURdb$Poly_conv*UCURdb$`X675`,UCURdb$Fat_conv*UCURdb$`X675`)))
+              UCURdb$FNA_F18D2CLA<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CLA_per_serving_g),UCURdb$F18D2CLA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X670`),UCURdb$Poly_conv*UCURdb$`X670`,UCURdb$Fat_conv*UCURdb$`X670`)))
+              
               ######plot
               #UCURmeltPUFA <- melt(UCURdb[,c(2,477:492)] ,  id.vars = 'Count', variable.name = 'Chemical')
               #UCURmeltPUFA$Count<-as.numeric(UCURmeltPUFA$Count)
@@ -206,12 +212,8 @@
               UCURdb$FNA_F16D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D1T_per_serving_g),UCURdb$F16D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X662`),UCURdb$Trans_conv*UCURdb$`X662`,UCURdb$Fat_conv*UCURdb$`X662`)))
               UCURdb$FNA_F18D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1T_per_serving_g),UCURdb$F18D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X663`),UCURdb$Trans_conv*UCURdb$`X663`,UCURdb$Fat_conv*UCURdb$`X663`)))
               UCURdb$FNA_F18D1TN7<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1TN7_per_serving_g),UCURdb$F18D1TN7_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X859`),UCURdb$Trans_conv*UCURdb$`X859`,UCURdb$Fat_conv*UCURdb$`X859`)))
-              UCURdb$FNA_F18D2CLA<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CLA_per_serving_g),UCURdb$F18D2CLA_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X670`),UCURdb$Trans_conv*UCURdb$`X670`,UCURdb$Fat_conv*UCURdb$`X670`)))
-              UCURdb$FNA_F182I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F182I_per_serving_g),UCURdb$F182I_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X666`),UCURdb$Trans_conv*UCURdb$`X666`,UCURdb$Fat_conv*UCURdb$`X666`)))
-              UCURdb$FNA_F18D2CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CN6_per_serving_g),UCURdb$F18D2CN6_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X675`),UCURdb$Trans_conv*UCURdb$`X675`,UCURdb$Fat_conv*UCURdb$`X675`)))
               UCURdb$FNA_F18D2X<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2X_per_serving_g),UCURdb$F18D2X_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X665`),UCURdb$Trans_conv*UCURdb$`X665`,UCURdb$Fat_conv*UCURdb$`X665`)))
               UCURdb$FNA_F18D2TT<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2TT_per_serving_g),UCURdb$F18D2TT_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X669`),UCURdb$Trans_conv*UCURdb$`X669`,UCURdb$Fat_conv*UCURdb$`X669`)))
-              UCURdb$FNA_F183I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F183I_per_serving_g),UCURdb$F183I_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X856`),UCURdb$Trans_conv*UCURdb$`X856`,UCURdb$Fat_conv*UCURdb$`X856`)))
               UCURdb$FNA_F22D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1T_per_serving_g),UCURdb$F22D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X664`),UCURdb$Trans_conv*UCURdb$`X664`,UCURdb$Fat_conv*UCURdb$`X664`)))
               UCURdb$FNA_FATRNM<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNM_per_serving_g),UCURdb$FATRNM_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X693`),UCURdb$Trans_conv*UCURdb$`X693`,UCURdb$Fat_conv*UCURdb$`X693`)))
               UCURdb$FNA_FATRNP<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNP_per_serving_g),UCURdb$FATRNP_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X695`),UCURdb$Trans_conv*UCURdb$`X695`,UCURdb$Fat_conv*UCURdb$`X695`)))
@@ -313,9 +315,13 @@
             foodomics<-UCURdb[ , c(1:8,97:100, 399:565) ]
             #Put supplements back into the main database
             library(gtools)
+            supplements$PRODUCTNDID<-supplements$NDID
             UCURdb2<-smartbind(foodomics,supplements)
            #foodomics <- sapply(foodomics, as.numeric)
-            foodomics<-as.data.frame(foodomics)
+            setwd("~/GitHub/foodomics")
+            source("getEatenUSDA.R")
+            UCURdb3<-smartbind(UCURdb2,eatenUSDAfoods)
+            foodomics<-as.data.frame(UCURdb3)
             
 #####################
 #####SAVE RESULTS####
@@ -332,5 +338,5 @@
             #save whole database with all unneeded columns
             setwd("Z:/MySQL Database/Diet/Reference_Tables")
             name2<-paste("whole_foodomics_DB", time, sep="_")
-            write.csv(UCURdb2, file=paste(name2, "csv", sep="."))
+            write.csv(UCURdb3, file=paste(name2, "csv", sep="."))
      

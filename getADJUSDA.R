@@ -1,20 +1,26 @@
 #getADJUSDA
 #####HERE NEED TO MAKE IT SUCH THAT THE PROFILE DATA ARE ACTUALLY CORRECT (IF FAT IS 0, then all fat sub-classes are 0)
 
+#Calculate Adjusted Carbohydate, remembering that every serving is now 100 grams
+USDA$CHObyCAL <- ((((USDA$`X208`/100)* 100) - (((USDA$`X204`/100)*100)*9) - (((USDA$`X203`/100)*100)*4))/4)
+USDA$CHObyWEIGHT <- ifelse(USDA$`X205`=="0", 0, ((USDA$`X205`/100)*100))
+USDA$CHOdec<- ifelse(USDA$CHObyCAL>USDA$CHObyWEIGHT,USDA$CHObyCAL,USDA$CHObyWEIGHT)
+USDA$CHOdec2<- ifelse(USDA$CHOdec>100,100,USDA$CHOdec)
+
 ################
 #CHO CONVERSIONS
 ################
 
-USDA$`X221`<-ifelse(USDA$`X205`=="0",0,USDA$`X221`)
-USDA$`X291`<-ifelse(USDA$`X205`=="0",0,USDA$`X291`)
-USDA$`X213`<-ifelse(USDA$`X205`=="0",0,USDA$`X213`)
-USDA$`X214`<-ifelse(USDA$`X205`=="0",0,USDA$`X214`)
-USDA$`X212`<-ifelse(USDA$`X205`=="0",0,USDA$`X212`)
-USDA$`X287`<-ifelse(USDA$`X205`=="0",0,USDA$`X287`)
-USDA$`X211`<-ifelse(USDA$`X205`=="0",0,USDA$`X211`)
-USDA$`X209`<-ifelse(USDA$`X205`=="0",0,USDA$`X209`)
-USDA$`X210`<-ifelse(USDA$`X205`=="0",0,USDA$`X210`)
-USDA$`X269`<-ifelse(USDA$`X205`=="0",0,USDA$`X269`)
+USDA$`X221`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X221`)
+USDA$`X291`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X291`)
+USDA$`X213`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X213`)
+USDA$`X214`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X214`)
+USDA$`X212`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X212`)
+USDA$`X287`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X287`)
+USDA$`X211`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X211`)
+USDA$`X209`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X209`)
+USDA$`X210`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X210`)
+USDA$`X269`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X269`)
 
 
 ################
@@ -116,3 +122,5 @@ USDA$`X614`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X606`=="0",0,USDA$`X614`))
 USDA$`X615`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X606`=="0",0,USDA$`X615`))
 USDA$`X624`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X606`=="0",0,USDA$`X624`))
 USDA$`X654`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X606`=="0",0,USDA$`X654`))
+
+
