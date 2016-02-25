@@ -28,7 +28,7 @@ if(!require(zoo)){
   library(zoo) #for creating time series
 }
 
-if(!require(stringr)){
+if(!require(stringr)){ 
   install.packages("stringr")
   library(stringr) #for creating time series
 }
