@@ -1,18 +1,9 @@
-mooshIntake.R
-
-
-melted_daily_intakes
-
-
-
 setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Menus")
 daily_menus<-read.csv(file='KG0222_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
 
 setwd("Z:/MySQL Database/Diet/Reference_Tables")
 foodomics<-readRDS(file="foodomics_DB_Feb_18_2016_13_38_34.rds")
-
-
 
 
 library(data.table)
@@ -28,8 +19,6 @@ menus_wide_ID <- reshape(menus_ID, direction="wide", idvar = c("MRNUMBER","PKT_R
 #Working with the actual values
 menus_Amt<-data[,c("MRNUMBER","PKT_Recipe_Number","PKT_Recipe_Ingredient_Amount", "number")]
 menus_wide_amt <- reshape(menus_Amt, direction="wide", idvar = c("MRNUMBER","PKT_Recipe_Number"), timevar = "number")
-
-
 
 
 
