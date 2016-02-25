@@ -5,16 +5,14 @@ melted_daily_intakes
 
 
 
-setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Test_0196")
-daily_menus<-read.csv(file='KG0196_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Menus")
+daily_menus<-read.csv(file='KG0222_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
 
 setwd("Z:/MySQL Database/Diet/Reference_Tables")
 foodomics<-readRDS(file="foodomics_DB_Feb_18_2016_13_38_34.rds")
 
 
-
-What we want to do is moosh the mes with the daily intakes
 
 
 library(data.table)
@@ -45,7 +43,7 @@ Manyfoods_DI <- melt(Foods_by_DI ,  id.vars = c("MRNUMBER","PKT_Recipe_Number","
 write.csv(Manyfoods_DI , file="Manyfoods_DI.csv")
 
 #the above function generates a lot of rows with blank data, so lets get rid of them
-clean_Manyfoods_DI<-Manyfoods_DI[!is.na(Manyfoods_DI$Intake),]
+clean_Manyfoods_DI<-Manyfoods_DI[!is.na(Manyfoods_DI$value),]
 
 #Now we want to merge in the values to use in scaling
 Foods_by_DI_2<-merge(melted_daily_intakes,menus_wide_amt, by=c("MRNUMBER","PKT_Recipe_Number"))
@@ -118,24 +116,39 @@ clean_Manyfoods_DI222$PRODUCTNDID<-clean_Manyfoods_DI222$value
 temp <- abs(outer(clean_Manyfoods_DI222$MATCH_DATE,foodomics_eaten$MATCH_DATE,"-"))
 ind <- apply(temp, 1, function(i) which.min(i))
 ind<-as.numeric(ind)
-result<-merge(clean_Manyfoods_DI222, foodomics_eaten[ind,], by=c("PRODUCTNDID"))
-#result <- cbind(clean_Manyfoods_DI222, foodomics_eaten[ind,])
+result <- cbind(clean_Manyfoods_DI222, foodomics_eaten[ind,])
 write.csv(result , file="result_not_summed.csv")
 
+
+check_dates <- abs(outer(clean_Manyfoods_DI222$MATCH_DATE,foodomics_eaten$MATCH_DATE,"-")) #finds the closest date for every field pairing
+check_ndid <- outer(clean_Manyfoods_DI222$PRODUCTNDID,foodomics_eaten$PRODUCTNDID,"==") #determines if the NDID was the same for each field pairing
+check_ndid[check_ndid==0]<-NA #changes 0 to NA
+check_all <- check_dates*check_ndid #multiply the two arrays together to get a conditionally valid list of closeness
+best_match <- apply(check_all, 1, function(i) which.min(i)) #find the smallest value in each conditionally valid list
+best_match <- as.numeric(best_match)
+result <- cbind(clean_Manyfoods_DI222, foodomics_eaten[best_match,]) #merge the two arrays based on the result of the best_match array
+write.csv(result , file="result_not_summed.csv")
+
+
+
+
+
+
+
 #Calculations
-result2 <- result[,c(1:7,24:190,426:431,584,587)]
-result2[,-c(1:6,182)] <- sapply(result2[,-c(1:6,182)], as.numeric)
-result3=as.data.frame(apply( result2[,-c(1:6,182)], 2, function(x) x *  result2$Intake / 100))
+result2 <- result[,c(1:5,21,25:185)]
+result2[,-c(1:5)] <- sapply(result2[,-c(1:5)], as.numeric)
+result3=as.data.frame(apply( result2[,-c(1:5)], 2, function(x) x *  result2$Intake / 100))
 result3$MATCH_DATE<-result2$MATCH_DATE
 write.csv(result3, file="result_scaled.csv")
 
 
 #Columns to use in the sum for daily summary
-result4<-result3[,-c(1)]
+#result4<-result3[,-c(1)]
 #result_daily[,c(-175)] <- sapply(result_daily[,c(-175)], as.numeric)
-result_daily_summed <- aggregate(x = result4[,c(-175)],
+result_daily_summed <- aggregate(x = result3[,c(-163)],
                      FUN = sum,
-                     by = list(Group.date = result4$MATCH_DATE), na.rm=TRUE)
+                     by = list(Group.date = result3$MATCH_DATE), na.rm=TRUE)
 
 #result4 %>% group_by(MATCH_DATE) %>% summarise_each(funs(sum))
 #notworking<-by(result4, result4$MATCH_DATE, function(x) colSums(result4[,-c(175)]))

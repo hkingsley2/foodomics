@@ -50,15 +50,15 @@ if(!require(stringr)){
 #----3) prune the whole time series using the information from the demographics table
 
 #Load foodomics dataset
-foodomicsDB<-readRDS("foodomicsDB.RDS")
+#foodomicsDB<-readRDS("foodomicsDB.RDS")
 
 ######################################################
 ##########Create the Full Length Time Series##########
 ######################################################
                   
                   #Load the daily data
-                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Test_0196")
-                  daily_intakes<-read.csv(file='KG0196_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
+                  daily_intakes<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   #Take first two columns that have Date and ME number information
                   daily_intakes<-daily_intakes[,c(1:3)]
@@ -107,8 +107,8 @@ foodomicsDB<-readRDS("foodomicsDB.RDS")
 ###DATA QUALITY###
 ##################
 #Get the data and aggregate it so that there is only one DATT value per diet record
-                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Test_0196")
-                  data_type<-read.csv(file='KG0196_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
+                  data_type<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   Data.Type<-data_type[,c(1,2,4)]
                   #Data.Type<-rename(Data.Type, Date=Date.of.Intake)
@@ -131,8 +131,8 @@ foodomicsDB<-readRDS("foodomicsDB.RDS")
 ##################
 
                 #Get the data and aggregate it so that there is only one value per date
-                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Test_0196")
-                  day_type<-read.csv(file='KG0196_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
+                  day_type<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   Day.Type<-day_type[,c(1,2,5)]
                   #Day.Type<-rename(Day.Type, Date=Date.of.Intake)
                   Day.Type<-rename(Day.Type, DAYT=Day_Quality)
@@ -152,24 +152,21 @@ foodomicsDB<-readRDS("foodomicsDB.RDS")
                   #MERGE DAY TYPE AND DATA TYPE
                   types<-merge(Day.Type,Data.Type,by=c("MRNUMBER","Date"))
 
-                  
-                  
 ###############
 ###MERGE ALL###
 ###############
-
                   #MERGE THE DAILY INTAKE DATA WITH THE QUALITY DATA
                   wide_daily_intakes<-merge(final,types,by=c("MRNUMBER","Date"))
                   #wide_daily_intakes<-wide_daily_intakes[,c(1:7,9:10)] #remove unneeded date column
 
-                  
-                  
 ######################################################
 ##############Bring in Diet Change Info###############
 ######################################################
                   
                   ####Now, we need to bring in the data about the diet prescription changes.
-                  diet_changes<-read.csv(file='KG0196_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
+                  setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Rx")
+                  
+                  diet_changes<-read.csv(file='KG0222_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
                   diet_changes<-diet_changes[!diet_changes$Date_of_Change=="", ] #gets rid of any blank rows in the file
                   diet_changes[is.na(diet_changes)]<- "0" #gives a 0 to any blank cell for calculation purposes
                   
