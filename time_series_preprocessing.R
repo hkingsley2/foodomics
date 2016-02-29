@@ -270,10 +270,13 @@ setDT(test2)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
 
 #Melt the data so that we can being to import the profile information
 test2<-as.data.frame(test2)
-pruned<-test2[,c(2,3,10,11,12,13,14,15,16,17,18)]
+test3 <- test2[,colSums(is.na(test2))<nrow(test2)]
+pruned<-test3[,c(2,3,10:18)]
 melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
+melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$PKT_Recipe_Number=="NA",]
 #Rename these variables
-melted_daily_intakes<-rename(melted_daily_intakes, PKT_Recipe_Number=value)
+#melted_daily_intakes<-rename(melted_daily_intakes, PKT_Recipe_Number=value)
+write.csv(melted_daily_intakes , file="melted_daily_intakes.csv")
 
 
 #test2[,c(paste0("ME_", 1:9))]<-str_split_fixed(test2$intakecode, ",", 9)
