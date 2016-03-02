@@ -58,7 +58,7 @@ if(!require(stringr)){
                   
                   #Load the daily data
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  daily_intakes<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  daily_intakes<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   #Take first two columns that have Date and ME number information
                   daily_intakes<-daily_intakes[,c(1:3)]
@@ -108,7 +108,7 @@ if(!require(stringr)){
 ##################
 #Get the data and aggregate it so that there is only one DATT value per diet record
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  data_type<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  data_type<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   Data.Type<-data_type[,c(1,2,4)]
                   #Data.Type<-rename(Data.Type, Date=Date.of.Intake)
@@ -132,7 +132,7 @@ if(!require(stringr)){
 
                 #Get the data and aggregate it so that there is only one value per date
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  day_type<-read.csv(file='KG0222_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  day_type<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   Day.Type<-day_type[,c(1,2,5)]
                   #Day.Type<-rename(Day.Type, Date=Date.of.Intake)
                   Day.Type<-rename(Day.Type, DAYT=Day_Quality)
@@ -166,7 +166,7 @@ if(!require(stringr)){
                   ####Now, we need to bring in the data about the diet prescription changes.
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Rx")
                   
-                  diet_changes<-read.csv(file='KG0222_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
+                  diet_changes<-read.csv(file='KG0013_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
                   diet_changes<-diet_changes[!diet_changes$Date_of_Change=="", ] #gets rid of any blank rows in the file
                   diet_changes[is.na(diet_changes)]<- "0" #gives a 0 to any blank cell for calculation purposes
                   
@@ -261,7 +261,7 @@ test<-reallyfinal2 %>% group_by(z = cumsum(cutoff2 != 0)) %>%
 setDT(test)
 test2<-test[,intakecode:=na.locf(intakecode,na.rm=FALSE,fromLast=TRUE),
                          by=list(as.factor(sum2))] #NOCB
-
+test3<-test2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=FALSE)]
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
 setDT(test2)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
 
