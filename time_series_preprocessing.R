@@ -263,15 +263,15 @@ test2<-test[,intakecode:=na.locf(intakecode,na.rm=FALSE,fromLast=TRUE),
                          by=list(as.factor(sum2))] #NOCB
 test3<-test2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=FALSE)]
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
-setDT(test2)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
+setDT(test3)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
 
 
 
 
 #Melt the data so that we can being to import the profile information
-test2<-as.data.frame(test2)
-test3 <- test2[,colSums(is.na(test2))<nrow(test2)]
-pruned<-test3[,c(2,3,10:18)]
+test2<-as.data.frame(test3)
+test4 <- test2[,colSums(is.na(test3))<nrow(test3)]
+pruned<-test4[,c(2,3,10:18)]
 melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
 melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$PKT_Recipe_Number=="NA",]
 #Rename these variables
