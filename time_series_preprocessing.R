@@ -58,7 +58,7 @@ if(!require(stringr)){
                   
                   #Load the daily data
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  daily_intakes<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  daily_intakes<-read.csv(file='KG0194_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   #Take first two columns that have Date and ME number information
                   daily_intakes<-daily_intakes[,c(1:3)]
@@ -108,7 +108,7 @@ if(!require(stringr)){
 ##################
 #Get the data and aggregate it so that there is only one DATT value per diet record
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  data_type<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  data_type<-read.csv(file='KG0194_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   
                   Data.Type<-data_type[,c(1,2,4)]
                   #Data.Type<-rename(Data.Type, Date=Date.of.Intake)
@@ -132,7 +132,7 @@ if(!require(stringr)){
 
                 #Get the data and aggregate it so that there is only one value per date
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Intake")
-                  day_type<-read.csv(file='KG0013_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+                  day_type<-read.csv(file='KG0194_intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
                   Day.Type<-day_type[,c(1,2,5)]
                   #Day.Type<-rename(Day.Type, Date=Date.of.Intake)
                   Day.Type<-rename(Day.Type, DAYT=Day_Quality)
@@ -166,7 +166,7 @@ if(!require(stringr)){
                   ####Now, we need to bring in the data about the diet prescription changes.
                   setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Rx")
                   
-                  diet_changes<-read.csv(file='KG0013_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
+                  diet_changes<-read.csv(file='KG0194_rx.txt', header=TRUE, sep="\t") #NEED TO ADD MRNUMBER TO THIS FILE
                   diet_changes<-diet_changes[!diet_changes$Date_of_Change=="", ] #gets rid of any blank rows in the file
                   diet_changes[is.na(diet_changes)]<- "0" #gives a 0 to any blank cell for calculation purposes
                   
@@ -202,80 +202,92 @@ final_daily_intake<-merge(wide_daily_intakes,diet_changes[, c("Date", "sum2")],b
 #CALCULATE GAP DAYS#
 ####################
 
-final_daily_intake$GAP<-is.na(final_daily_intake$intakecode)
-final_daily_intake$GAP<-as.character(final_daily_intake$GAP)
-#final_daily_intake<-final_daily_intake[, rowid:=1:.N, by = GAP]
-#final_daily_intake<-final_daily_intake[, number := 1:.N, by = GAP]
-final_daily_intake$GAP[final_daily_intake$GAP=="TRUE"] <- "0"  #0s indicate GAP days
-final_daily_intake$GAP[final_daily_intake$GAP=="FALSE"] <- "1"
-final_daily_intake$GAP<-as.numeric(final_daily_intake$GAP)
-final_daily_intake$No_Days <- unlist(sapply(rle(final_daily_intake$GAP)$lengths,                                      
-                                            function(x) 
-                                              if (x>1) 
-                                                seq_len(x)
-                                            else 0))
+                  #final_daily_intake$GAP<-is.na(final_daily_intake$intakecode)
+                  #final_daily_intake$GAP<-as.character(final_daily_intake$GAP)
+###final_daily_intake<-final_daily_intake[, rowid:=1:.N, by = GAP]
+                  ###final_daily_intake<-final_daily_intake[, number := 1:.N, by = GAP]
+#final_daily_intake$GAP[final_daily_intake$GAP=="TRUE"] <- "0"  #0s indicate GAP days
+#final_daily_intake$GAP[final_daily_intake$GAP=="FALSE"] <- "1"
+#final_daily_intake$GAP<-as.numeric(final_daily_intake$GAP)
+#final_daily_intake$No_Days <- unlist(sapply(rle(final_daily_intake$GAP)$lengths,                                      
+                                            #                                            function(x) 
+                                              #                                              if (x>1) 
+                                                #                                                seq_len(x)
+                                            #                                            else 0))
 
-final_daily_intake$GAP_Days<-ifelse(final_daily_intake$GAP==0,final_daily_intake$No_Days,"NA")
+#final_daily_intake$GAP_Days<-ifelse(final_daily_intake$GAP==0,final_daily_intake$No_Days,"NA")
 
 
-final_daily_intake$GAP_LABEL<-""
-final_daily_intake <- within(final_daily_intake, {
-  GAP_LABEL <- !is.na(GAP_Days)
-  GAP_LABEL[!is.na(GAP_Days)] <- cumsum(GAP_Days[!is.na(GAP_Days)]==1)
-})
+#final_daily_intake$GAP_LABEL<-""
+#final_daily_intake <- within(final_daily_intake, {
+  #  GAP_LABEL <- !is.na(GAP_Days)
+  #  GAP_LABEL[!is.na(GAP_Days)] <- cumsum(GAP_Days[!is.na(GAP_Days)]==1)
+  #})
 
-final_daily_intake$GAP_LABEL_FIX<-ifelse(is.na(final_daily_intake$intakecode), final_daily_intake$GAP_LABEL,  NA)
+#final_daily_intake$GAP_LABEL_FIX<-ifelse(is.na(final_daily_intake$intakecode), final_daily_intake$GAP_LABEL,  NA)
 
 ##GET THE GAP LABEL BACKWARDS SO THAT THE FIRST NON NA AND NEXT NON NA ARE IN SAME TIME SERIES
-setDT(final_daily_intake)
+#setDT(final_daily_intake)
 #TIME SERIES INPUT
-  final_daily_intake[,GAP_LABEL_FIX:=na.locf(GAP_LABEL_FIX,na.rm=TRUE,fromLast=TRUE)] #NOCB - I took out the last, by=MRNUMBER argument because it wasn't working
+#  final_daily_intake[,GAP_LABEL_FIX:=na.locf(GAP_LABEL_FIX,na.rm=TRUE,fromLast=TRUE)] #NOCB - I took out the last, by=MRNUMBER argument because it wasn't working
 
 #final_daily_intake$GAP_LABEL_FINAL<-ifelse(final_daily_intake$GAP==0,final_daily_intake$GAP_LABEL,"NA")
 
 #final_daily_intake2<-final_daily_intake[,c(1:10,13,16)]
-MaxVals<-aggregate(as.numeric(GAP_Days)~GAP_LABEL_FIX, data = final_daily_intake, max)
+  #MaxVals<-aggregate(as.numeric(GAP_Days)~GAP_LABEL_FIX, data = final_daily_intake, max)
 #MaxVals<-rename(MaxVals, Max=GAP_Days) #doesn't work >?????
-final_daily_intake2<-merge(final_daily_intake,MaxVals, by="GAP_LABEL_FIX", drop=FALSE, all.x=TRUE)
-final_daily_intake2$Cutoff<-round(as.numeric(final_daily_intake2$`as.numeric(GAP_Days)`)/2)
-library(lubridate)
-library(plyr)
-final_daily_intake2$Date <- ymd(final_daily_intake2$Date)
-reallyfinal<-arrange(final_daily_intake2,Date)
+  #final_daily_intake2<-merge(final_daily_intake,MaxVals, by="GAP_LABEL_FIX", drop=FALSE, all.x=TRUE)
+  #final_daily_intake2$Cutoff<-round(as.numeric(final_daily_intake2$`as.numeric(GAP_Days)`)/2)
+  #library(lubridate)
+#library(plyr)
+#final_daily_intake2$Date <- ymd(final_daily_intake2$Date)
+#reallyfinal<-arrange(final_daily_intake2,Date)
 
 
-reallyfinal$cutoff2<-ifelse(!is.na(reallyfinal$intakecode) & reallyfinal$Cutoff >0, reallyfinal$Cutoff,  NA)
+#reallyfinal$cutoff2<-ifelse(!is.na(reallyfinal$intakecode) & reallyfinal$Cutoff >0, reallyfinal$Cutoff,  NA)
 
-reallyfinal<-as.data.frame(reallyfinal)
-reallyfinal2<- reallyfinal[,c(1:7,14)]
-reallyfinal2$cutoff2<-as.numeric(ifelse(is.na(reallyfinal2$cutoff2), '0', reallyfinal2$cutoff2))
+#reallyfinal<-as.data.frame(reallyfinal)
+#reallyfinal2<- reallyfinal[,c(1:7,14)]
+#reallyfinal2$cutoff2<-as.numeric(ifelse(is.na(reallyfinal2$cutoff2), '0', reallyfinal2$cutoff2))
 
-reallyfinal2$intakecode<- as.character(reallyfinal2$intakecode)
+#reallyfinal2$intakecode<- as.character(reallyfinal2$intakecode)
   
 
-reallyfinal2<-as.data.frame(reallyfinal2)
-test<-reallyfinal2 %>% group_by(z = cumsum(cutoff2 != 0)) %>%
-  mutate(intakecode = ifelse(unlist(lapply(cutoff2, function(x) rep(as.logical(x), max(1,x + 1))))[1:n()], intakecode[1], intakecode))
+#reallyfinal2<-as.data.frame(reallyfinal2)
+#test<-reallyfinal2 %>% group_by(z = cumsum(cutoff2 != 0)) %>%
+  #  mutate(intakecode = ifelse(unlist(lapply(cutoff2, function(x) rep(as.logical(x), max(1,x + 1))))[1:n()], intakecode[1], intakecode))
 
 
-setDT(test)
-test2<-test[,intakecode:=na.locf(intakecode,na.rm=FALSE,fromLast=TRUE),
-                         by=list(as.factor(sum2))] #NOCB
-test3<-test2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=FALSE)]
+#setDT(test)
+#test2<-test[,intakecode:=na.locf(intakecode,na.rm=FALSE,fromLast=TRUE),
+            #                         by=list(as.factor(sum2))] #NOCB
+#test3<-test2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=FALSE)]
+                  
+                  
+                  
+                  
+                  
+####################################################################
+setDT(final_daily_intake)
+final_daily_intake2<-final_daily_intake[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=FALSE)]
+
+final_daily_intake2<-final_daily_intake2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=TRUE),
+                                        by=list(as.factor(sum2))]
+
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
-setDT(test3)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
+setDT(final_daily_intake2)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
 
 
 
 
 #Melt the data so that we can being to import the profile information
-test2<-as.data.frame(test3)
-test4 <- test2[,colSums(is.na(test3))<nrow(test3)]
-pruned<-test4[,c(2,3,10:18)]
+final_daily_intake2<-as.data.frame(final_daily_intake2)
+final_daily_intake3 <- final_daily_intake2[,colSums(is.na(final_daily_intake2))<nrow(final_daily_intake2)]
+pruned<-final_daily_intake3[,c(1:2,7:11)]
 melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
-melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$PKT_Recipe_Number=="NA",]
+melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$value=="NA",]
 #Rename these variables
-#melted_daily_intakes<-rename(melted_daily_intakes, PKT_Recipe_Number=value)
+melted_daily_intakes<-rename(melted_daily_intakes, PKT_Recipe_Number=value)
 write.csv(melted_daily_intakes , file="melted_daily_intakes.csv")
 
 

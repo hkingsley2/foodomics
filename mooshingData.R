@@ -1,11 +1,11 @@
 setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Menus")
-daily_menus<-read.csv(file='KG0013_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+daily_menus<-read.csv(file='KG0194_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
 
 setwd("Z:/MySQL Database/Diet/Reference_Tables")
 foodomics<-readRDS(file="foodomics_DB_Feb_18_2016_13_38_34.rds")
 
-
+library(lubridate)
 library(data.table)
 dt <- data.table(daily_menus) #after this the date is mm/dd/yy 12:00 AM
 test5<-dt[, number := 1:.N, by=c("MRNUMBER","PKT_Recipe_Number")] #this numbers every row in the dt by date

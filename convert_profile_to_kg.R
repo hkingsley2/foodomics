@@ -5,7 +5,7 @@
 setwd("Z:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data for foodomics")
 
 #Fixing dates
-weights<-read.csv(file="KG0222.txt", sep="\t", header=TRUE, stringsAsFactors = FALSE)
+weights<-read.csv(file="KG0194.txt", sep="\t", header=TRUE, stringsAsFactors = FALSE)
 names(weights)[names(weights) == 'Date'] <- 'Group.date'
 weights$Group.date<-as.POSIXlt(weights$Group.date,format="%m/%d/%y")
 weights$Group.date<-as.Date(weights$Group.date)
@@ -15,6 +15,7 @@ food_and_weight<-merge(result_daily_summed, weights, by=c("Group.date"))
 food_and_weight[,-c(1,42:45,164:165)]=as.data.frame(apply(food_and_weight[,-c(1,42:45,164:165)], 2, function(x) x / food_and_weight$WT))
 
 food_and_weight_clean<-food_and_weight[,-c(42:45,164:165)]
+write.csv(food_and_weight_clean, file="daily_food_and_weight_clean.csv")
 
 
 parameters<-names(food_and_weight_clean)
