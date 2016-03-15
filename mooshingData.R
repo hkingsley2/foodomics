@@ -1,5 +1,5 @@
 setwd("Z:/MySQL Database/Diet/Raw_Data/Dec2015/Dec2015Data_deid/Menus")
-daily_menus<-read.csv(file='KG0194_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
+daily_menus<-read.csv(file='KG0196_menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
 
 setwd("Z:/MySQL Database/Diet/Reference_Tables")
