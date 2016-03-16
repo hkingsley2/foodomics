@@ -3,7 +3,7 @@ daily_menus<-read.csv(file='KG0196_menus.txt', header=TRUE, sep="\t", na.strings
 
 
 setwd("Z:/MySQL Database/Diet/Reference_Tables")
-foodomics<-readRDS(file="foodomics_DB_Feb_18_2016_13_38_34.rds")
+foodomics<-readRDS(file="foodomics_DB_Mar_16_2016_13_16_40.rds")
 
 library(lubridate)
 library(data.table)
