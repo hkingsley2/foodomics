@@ -127,10 +127,10 @@
               
               #If NFL DATA FOR A FAT SUB-CLASS ARE AVAILABLE
               #Do we want to adjust their TOTAL MUFA by taking the sum of MUFAs or their total mufa category
-              UCURdb$FNA_FAMS<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Monounsaturated_Fat_per_serving_g),UCURdb$Monounsaturated_Fat_per_serving_g,UCURdb$FAT_conv*UCURdb$`X645`))
-              UCURdb$FNA_FAPU<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Polyunsaturated_Fat_per_serving_g),UCURdb$Polyunsaturated_Fat_per_serving_g,UCURdb$FAT_conv*UCURdb$`X646`))
-              UCURdb$FNA_FASAT<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Saturated_Fat_per_serving_g),UCURdb$Saturated_Fat_per_serving_g,UCURdb$FAT_conv*UCURdb$`X606`))
-              UCURdb$FNA_FATRN<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Trans_Fat_per_serving_g),UCURdb$Trans_Fat_per_serving_g,UCURdb$FAT_conv*UCURdb$`X605`))
+              UCURdb$FNA_FAMS<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Monounsaturated_Fat_per_serving_g),UCURdb$Monounsaturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X645`))
+              UCURdb$FNA_FAPU<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Polyunsaturated_Fat_per_serving_g),UCURdb$Polyunsaturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X646`))
+              UCURdb$FNA_FASAT<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Saturated_Fat_per_serving_g),UCURdb$Saturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X606`))
+              UCURdb$FNA_FATRN<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Trans_Fat_per_serving_g),UCURdb$Trans_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X605`))
               
               ########NOW CALCULATE THE FATTY ACIDS
               UCURdb$Poly_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Polyunsaturated_Fat_per_serving_g),UCURdb$Polyunsaturated_Fat_per_serving_g/UCURdb$`X646`,1)) 
@@ -309,6 +309,7 @@
              #convert supplements
              setwd("~/GitHub/foodomics")
              source("getSUPPLEMENTS.R")
+             write.csv(UCURdb, file="UCURdb.csv")
 
             #Keep only foodomics columns?
             # foodomics<-UCURdb[ , grepl( "FNA" , names(UCURdb) ) ]
