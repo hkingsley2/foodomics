@@ -4,8 +4,9 @@
               
               #(1)
               #Read in the USDA database
-              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               USDA<-read.csv(file="SR28_PROFILE_DATA.csv", header=TRUE) #import USDA profile data
+              
               #Update/complete profiles with information that is available on macronutrients
               setwd("~/GitHub/foodomics/Foodomics Database Creation")
             
@@ -13,12 +14,13 @@
               
               #(2)
               #Read in the USDAweightedNFD
-              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               USDAweightedNFD <- read.csv(file="USDA BASE PRODUCTS.txt", header=TRUE, sep="\t", stringsAsFactors = FALSE)
               #Change product (weighting factor) to a numeric value
               USDAweightedNFD$X.OFPRODUCT<-as.numeric(USDAweightedNFD$X.OFPRODUCT)
               
               #Make sure that each of the NDIDs in the sheet add up to 1 (view results of ADD)
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               ADD<- aggregate(USDAweightedNFD$X.OFPRODUCT, by=list(Category=USDAweightedNFD$PRODUCTNDID), FUN=sum)
               write.csv(ADD, file="CHECKING_BASE_PRODUCTS.csv")
 
@@ -71,6 +73,7 @@
 #####SAVE RESULTS####
 #####################
               
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
               saveRDS(referenceBASEP, file="reference_BASEP.rds")
               
               write.csv(referenceBASEP, file="reference_BASEP.csv")

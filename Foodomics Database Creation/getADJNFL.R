@@ -3,11 +3,11 @@
 #####################
               
               #GET HISTORICAL NUTRITION FACTS DATABASE
-              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               compiledNFD<- read.csv(file = "TRANSLATING_BNFD_TO_R.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", "NULL"),stringsAsFactors=FALSE)
-                            
+                                          
               #GET REFERENCE BASE PRODUCT PROFILE DATABASE
-              setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
               referenceBASEP<-readRDS(file = "reference_BASEP.rds")
 
 ###############################################
@@ -153,12 +153,6 @@
               UCURdb$FNA_F20D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D0_per_serving_g),UCURdb$F20D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X615`),UCURdb$Sat_conv*UCURdb$`X615`,UCURdb$Fat_conv*UCURdb$`X615`)))
               UCURdb$FNA_F22D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D0_per_serving_g),UCURdb$F22D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X624`),UCURdb$Sat_conv*UCURdb$`X624`,UCURdb$Fat_conv*UCURdb$`X624`)))
               UCURdb$FNA_F24D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D0_per_serving_g),UCURdb$F24D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X654`),UCURdb$Sat_conv*UCURdb$`X654`,UCURdb$Fat_conv*UCURdb$`X654`)))
-              
-              ######plot
-              #UCURmeltSFA <- melt(UCURdb[,c(2,452:465)] ,  id.vars = 'Count', variable.name = 'Chemical')
-              #UCURmeltSFA$Count<-as.numeric(UCURmeltSFA$Count)
-              #UCURmeltSFA$value<-as.numeric(UCURmeltSFA$value)
-              #ggplot(UCURmeltSFA, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
 
               ######MUFA
               UCURdb$FNA_F14D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F14D1_per_serving_g),UCURdb$F14D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X625`),UCURdb$Mono_conv*UCURdb$`X625`,UCURdb$Fat_conv*UCURdb$`X625`)))
@@ -172,13 +166,7 @@
               UCURdb$FNA_F22D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1C_per_serving_g),UCURdb$F22D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X676`),UCURdb$Mono_conv*UCURdb$`X676`,UCURdb$Fat_conv*UCURdb$`X676`)))
               UCURdb$FNA_F22D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1_per_serving_g),UCURdb$F22D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X630`),UCURdb$Mono_conv*UCURdb$`X630`,UCURdb$Fat_conv*UCURdb$`X630`)))
               UCURdb$FNA_F24D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D1C_per_serving_g),UCURdb$F24D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X671`),UCURdb$Mono_conv*UCURdb$`X671`,UCURdb$Fat_conv*UCURdb$`X671`)))
-              
-              ######plot
-              #UCURmeltMUFA <- melt(UCURdb[,c(2,466:476)] ,  id.vars = 'Count', variable.name = 'Chemical')
-              #UCURmeltMUFA$Count<-as.numeric(UCURmeltMUFA$Count)
-              #UCURmeltMUFA$value<-as.numeric(UCURmeltMUFA$value)
-              #ggplot(UCURmeltMUFA, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
-    
+
               ######PUFA
               UCURdb$FNA_F18D4<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D4_per_serving_g),UCURdb$F18D4_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X627`),UCURdb$Poly_conv*UCURdb$`X627`,UCURdb$Fat_conv*UCURdb$`X627`)))
               UCURdb$FNA_F21D5<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F21D5_per_serving_g),UCURdb$F21D5_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X857`),UCURdb$Poly_conv*UCURdb$`X857`,UCURdb$Fat_conv*UCURdb$`X857`)))
@@ -202,12 +190,6 @@
               UCURdb$FNA_F18D2CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CN6_per_serving_g),UCURdb$F18D2CN6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X675`),UCURdb$Poly_conv*UCURdb$`X675`,UCURdb$Fat_conv*UCURdb$`X675`)))
               UCURdb$FNA_F18D2CLA<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CLA_per_serving_g),UCURdb$F18D2CLA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X670`),UCURdb$Poly_conv*UCURdb$`X670`,UCURdb$Fat_conv*UCURdb$`X670`)))
               
-              ######plot
-              #UCURmeltPUFA <- melt(UCURdb[,c(2,477:492)] ,  id.vars = 'Count', variable.name = 'Chemical')
-              #UCURmeltPUFA$Count<-as.numeric(UCURmeltPUFA$Count)
-              #UCURmeltPUFA$value<-as.numeric(UCURmeltPUFA$value)
-              #ggplot(UCURmeltPUFA, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
-                 
               ######TRANS
               UCURdb$FNA_F16D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D1T_per_serving_g),UCURdb$F16D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X662`),UCURdb$Trans_conv*UCURdb$`X662`,UCURdb$Fat_conv*UCURdb$`X662`)))
               UCURdb$FNA_F18D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1T_per_serving_g),UCURdb$F18D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X663`),UCURdb$Trans_conv*UCURdb$`X663`,UCURdb$Fat_conv*UCURdb$`X663`)))
@@ -218,13 +200,6 @@
               UCURdb$FNA_FATRNM<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNM_per_serving_g),UCURdb$FATRNM_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X693`),UCURdb$Trans_conv*UCURdb$`X693`,UCURdb$Fat_conv*UCURdb$`X693`)))
               UCURdb$FNA_FATRNP<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNP_per_serving_g),UCURdb$FATRNP_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X695`),UCURdb$Trans_conv*UCURdb$`X695`,UCURdb$Fat_conv*UCURdb$`X695`)))
               
-              ######plot
-              #library(reshape)
-              #UCURmeltTFA <- melt(UCURdb[,c(2,493:504)] ,  id.vars = 'Count', variable.name = 'Chemical')
-              #UCURmeltTFA$Count<-as.numeric(UCURmeltTFA$Count)
-              #UCURmeltTFA$value<-as.numeric(UCURmeltTFA$value)
-              #ggplot(UCURmeltTFA, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 5)
-
              ###EVERYTHING ELSE
              UCURdb$FNA_CARTA<-ifelse(!is.na(UCURdb$Carotene_alpha_per_serving_mcg),UCURdb$Carotene_alpha_per_serving_mcg,UCURdb$`X322`)
              UCURdb$FNA_CARTB<-ifelse(!is.na(UCURdb$Carotene_beta_per_serving_mcg),UCURdb$Carotene_beta_per_serving_mcg,UCURdb$`X321`)
@@ -299,36 +274,28 @@
              UCURdb$FNA_ASH<-ifelse(!is.na(UCURdb$Ash_per_serving_g),UCURdb$Ash_per_serving_g,UCURdb$`X207`)
              UCURdb$FNA_WATER<-ifelse(!is.na(UCURdb$Water_per_serving_g),UCURdb$Water_per_serving_g,UCURdb$`X255`)
 
-             
-             ######plot
-             #UCURmeltOTHER <- melt(UCURdb[,c(2,505:575)] ,  id.vars = 'Count', variable.name = 'Chemical')
-             #UCURmeltOTHER$Count<-as.numeric(UCURmeltOTHER$Count)
-             #UCURmeltOTHER$value<-as.numeric(UCURmeltOTHER$value)
-             #ggplot(UCURmeltOTHER, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 10)
-
              #convert supplements
              setwd("~/GitHub/foodomics/Foodomics Database Creation/")
              source("getSUPPLEMENTS.R")
              write.csv(UCURdb, file="UCURdb.csv")
 
-            #Keep only foodomics columns?
-            # foodomics<-UCURdb[ , grepl( "FNA" , names(UCURdb) ) ]
-            foodomics<-UCURdb[ , c(1:8,97:100, 399:565) ]
-            #Put supplements back into the main database
-            library(gtools)
-            supplements$PRODUCTNDID<-supplements$NDID
-            UCURdb2<-smartbind(foodomics,supplements)
-           #foodomics <- sapply(foodomics, as.numeric)
-            setwd("~/GitHub/foodomics/Foodomics Database Creation/")
-            source("getEatenUSDA.R")
-            UCURdb3<-smartbind(UCURdb2,eatenUSDAfoods)
-            foodomics<-as.data.frame(UCURdb3)
+              foodomics<-UCURdb[ , c(1:8,97:100, 399:565) ]
+              
+              #Put supplements back into the main database
+              library(gtools)
+              supplements$PRODUCTNDID<-supplements$NDID
+              UCURdb2<-smartbind(foodomics,supplements)
+              
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/")
+              source("getEatenUSDA.R")
+              UCURdb3<-smartbind(UCURdb2,eatenUSDAfoods)
+              foodomics<-as.data.frame(UCURdb3)
             
 #####################
 #####SAVE RESULTS####
 #####################
             
-            setwd("Z:/MySQL Database/Diet/Reference_Tables")
+            setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
             time<-format(Sys.time(), "%b_%d_%Y_%H_%M_%S")
             
             name<-paste("foodomics_DB", time, sep="_")
@@ -337,7 +304,7 @@
             foodomics<-readRDS(file=paste(name, "rds", sep="."))
             
             #save whole database with all unneeded columns
-            setwd("Z:/MySQL Database/Diet/Reference_Tables")
+            setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
             name2<-paste("whole_foodomics_DB", time, sep="_")
             write.csv(UCURdb3, file=paste(name2, "csv", sep="."))
      
