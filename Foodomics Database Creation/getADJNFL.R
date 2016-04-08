@@ -33,7 +33,7 @@
               compiledNFD<-subset(compiledNFD, !compiledNFD$Category_1=="Baby_Foods")
               
               #Translate daily values
-              setwd("~/GitHub/foodomics")
+              setwd("~/GitHub/foodomics/Foodomics Database Creation/")
               source("transDV.R")
 
               #Put baby foods back into the main database
@@ -307,7 +307,7 @@
              #ggplot(UCURmeltOTHER, aes(Count,value)) + geom_point() + facet_wrap(~variable, ncol = 10)
 
              #convert supplements
-             setwd("~/GitHub/foodomics")
+             setwd("~/GitHub/foodomics/Foodomics Database Creation/")
              source("getSUPPLEMENTS.R")
              write.csv(UCURdb, file="UCURdb.csv")
 
@@ -319,7 +319,7 @@
             supplements$PRODUCTNDID<-supplements$NDID
             UCURdb2<-smartbind(foodomics,supplements)
            #foodomics <- sapply(foodomics, as.numeric)
-            setwd("~/GitHub/foodomics")
+            setwd("~/GitHub/foodomics/Foodomics Database Creation/")
             source("getEatenUSDA.R")
             UCURdb3<-smartbind(UCURdb2,eatenUSDAfoods)
             foodomics<-as.data.frame(UCURdb3)

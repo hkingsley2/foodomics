@@ -1,7 +1,8 @@
 ###This script will fun the foodomics analysis
-setwd("~/GitHub/foodomics")
+
 
 #Step 1: Create reference database (of profiles to use in an analysis)
+setwd("~/GitHub/foodomics/Foodomics Database Creation")
 source("getBASEP.R")
                       #uses: getADJUSDA.R
                       #creates: referenceBASEP object
@@ -14,7 +15,7 @@ source("getBASEP.R")
 #----->Result is saved as a tab delimited text file
 
 #Step 3: Create foodomics database of Nutrition Facts Label Adjusted reference profiles
-setwd("~/GitHub/foodomics")
+setwd("~/GitHub/foodomics/Foodomics Database Creation")
 source("getADJNFL.R")
                       #uses: getSUPPLEMENTS.R
                       #creates: foodomics object
