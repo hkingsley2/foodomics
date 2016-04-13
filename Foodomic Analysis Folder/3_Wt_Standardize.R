@@ -56,19 +56,3 @@ for (i in 2:183) {
   print(plot_list[[i]])
 }
 dev.off()
-
-
-
-#######################################################
-###STOP RUNNING THE CODE ABOVE THIS LINE###
-#######################################################
-
-
-foodomics_fat<-food_and_weight_clean[, c(1,4,42:92)] 
-
-foodomics_boxes <- melt(foodomics_fat ,  id.vars = c('Group.date'), variable.name = 'Chemical')
-foodomics_boxes$value<-as.numeric(foodomics_boxes$value)
-library(ggplot2)
-
-ggplot(foodomics_boxes, aes(x=Group.date, y=value, color=Chemical)) + 
-  geom_line() 
