@@ -44,6 +44,29 @@ if(!require(stringr)){
   library(stringr) #for creating time series
 }
 
+if(!require(reshape2)){ 
+  install.packages("reshape2")
+  library(reshape2) #for creating time series
+}
+
+if(!require(lubridate)){ 
+  install.packages("lubridate")
+  library(lubridate) #for creating time series
+}
+
+if(!require(ggplot2)){ 
+  install.packages("ggplot2")
+  library(ggplot2) #for creating time series
+}
+
+if(!require(data.table)){ 
+  install.packages("data.table")
+  library(data.table) #for creating time series
+}
+
+
+
+
 #Required Docs (all in same folder)
 #----Daily intakes saved as .csv file with date formatted as mm/dd/yyyy hh:mmm
 #----New Data Tracking for obtaining diet changes (up to date)
