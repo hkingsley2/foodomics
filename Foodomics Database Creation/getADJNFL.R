@@ -4,7 +4,7 @@
               
               #GET HISTORICAL NUTRITION FACTS DATABASE
               setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
-              compiledNFD<- read.csv(file = "TRANSLATING_BNFD_TO_R.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", "NULL"),stringsAsFactors=FALSE)
+              compiledNFD<- read.csv(file = "TRANSLATING_BNFD_TO_R2.txt", header = TRUE, sep="\t", na.strings=c("NA","NaN", " ", "N/A", "NULL"),stringsAsFactors=FALSE)
                                           
               #GET REFERENCE BASE PRODUCT PROFILE DATABASE
               setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
