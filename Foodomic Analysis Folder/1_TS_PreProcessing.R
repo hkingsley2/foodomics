@@ -11,10 +11,10 @@
 #SET PATIENT FOLDER
 
 #if current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/SoSc01268008"
+patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/"
 
 #if non current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/SiMa1501836"
+patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/"
 
 
 
