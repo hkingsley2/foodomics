@@ -3,7 +3,7 @@
 
 #(1)
 #Read in the USDA database
-setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
 USDA<-read.csv(file="SR28_PROFILE_DATA.csv", header=TRUE) #import USDA profile data
 #Update/complete profiles with information that is available on macronutrients
 setwd("~/GitHub/foodomics/Foodomics Database Creation")
@@ -11,7 +11,7 @@ source("getADJUSDA.R")
 
 #(2)
 #Read in the USDAweightedNFD
-setwd("Z:/MySQL Database/Diet/Reference_Tables/1_FoodomicsPreProcessing")
+setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
 USDAweightedNFD <- read.csv(file="USDA BASE PRODUCTS.txt", header=TRUE, sep="\t", stringsAsFactors = FALSE)
 #Change product (weighting factor) to a numeric value
 USDAweightedNFD$PRODUCTNDID<-USDAweightedNFD$NDID.FOR.USDA.PRODUCTS
