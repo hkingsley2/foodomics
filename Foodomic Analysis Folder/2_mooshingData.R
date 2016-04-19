@@ -8,7 +8,7 @@ daily_menus$PKT_Recipe_Number<-tolower(daily_menus$PKT_Recipe_Number)
 
 
 setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
-foodomics<-readRDS(file="foodomics_DB_Apr_18_2016_14_56_19.rds")
+foodomics<-readRDS(file="foodomics_DB_Apr_19_2016_10_41_13.rds")
 
 
 setwd(patientfolder)
