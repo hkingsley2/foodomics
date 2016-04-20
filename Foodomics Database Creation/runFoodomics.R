@@ -19,3 +19,8 @@ setwd("~/GitHub/foodomics/Foodomics Database Creation")
 source("getADJNFL.R")
                       #uses: getSUPPLEMENTS.R
                       #creates: foodomics object
+
+
+
+
+
