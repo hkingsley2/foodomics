@@ -143,11 +143,10 @@ write.csv(result3, file="result_scaled.csv")
 #Columns to use in the sum for daily summary
 #result4<-result3[,-c(1)]
 #result_daily[,c(-175)] <- sapply(result_daily[,c(-175)], as.numeric)
-result_daily_summed <- aggregate(x = result3[,-c(1,41:44,168:187)],
+result_daily_summed <- aggregate(x = result3[,-c(1,40:43,167:168)],
                                  FUN = sum,
                                  by = list(Group.date = result3$MATCH_DATE), na.rm=TRUE)
 
 #result4 %>% group_by(MATCH_DATE) %>% summarise_each(funs(sum))
 #notworking<-by(result4, result4$MATCH_DATE, function(x) colSums(result4[,-c(175)]))
-
 write.csv(result_daily_summed, file="result_daily_summed.csv")
