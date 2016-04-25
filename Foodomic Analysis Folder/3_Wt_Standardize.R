@@ -5,18 +5,20 @@
 setwd("Z:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data for foodomics")
 
 #Fixing dates
-weights<-read.csv(file="KG0157.txt", sep="\t", header=TRUE, stringsAsFactors = FALSE)
+weights<-read.csv(file="KG0087.txt", sep="\t", header=TRUE, stringsAsFactors = FALSE)
 names(weights)[names(weights) == 'Date'] <- 'Group.date'
 weights$Group.date<-as.POSIXlt(weights$Group.date,format="%m/%d/%y")
 weights$Group.date<-as.Date(weights$Group.date)
 food_and_weight<-merge(result_daily_summed, weights, by=c("Group.date"))
 
 #Doing division
-food_and_weight[,-c(1,184:185)]=as.data.frame(apply(food_and_weight[,-c(1,184:185)], 2, function(x) x / food_and_weight$WT))
 
-food_and_weight_clean<-food_and_weight[,-c(184:185)]
+food_and_weight[,-c(1, 164:165)]=as.data.frame(apply(food_and_weight[,-c(1, 164:165)], 2, function(x) x / food_and_weight$WT))
+
+food_and_weight_clean<-food_and_weight[,-c(164:165)]
 setwd(patientfolder)
 write.csv(food_and_weight_clean, file="daily_food_and_weight_clean.csv")
+
 
 
 parameters<-names(food_and_weight_clean)
@@ -30,7 +32,7 @@ parameter_list = parameters
 
 # Make plots.
 plot_list = list()
-for (i in 2:183) {
+for (i in 2:163) {
   foodomics_one_var<-food_and_weight_clean[, c(1,i)] 
   
   foodomics_boxes <- melt(foodomics_one_var ,  id.vars = c('Group.date'), variable.name = 'Chemical')
@@ -52,7 +54,7 @@ for (i in 2:183) {
 # Another option: create pdf where each page is a separate plot.
 setwd(patientfolder)
 pdf("plots_scaled.pdf")
-for (i in 2:183) {
+for (i in 2:163) {
   print(plot_list[[i]])
 }
 dev.off()

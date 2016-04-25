@@ -11,10 +11,10 @@
 #SET PATIENT FOLDER
 
 #if current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/"
+patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/FiBo01699732"
 
 #if non current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/"
+patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/HaZe1225262_AJ33KGN/Test"
 
 
 
@@ -236,7 +236,7 @@ final_daily_intake2<-final_daily_intake[,intakecode:=na.locf(intakecode,na.rm=TR
 final_daily_intake2<-final_daily_intake2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=TRUE)]
 
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
-setDT(final_daily_intake2)[, paste0("Column", 1:6) := tstrsplit(intakecode, ",")]
+setDT(final_daily_intake2)[, paste0("Column", 1:9) := tstrsplit(intakecode, ",")]
 
 
 
@@ -244,7 +244,7 @@ setDT(final_daily_intake2)[, paste0("Column", 1:6) := tstrsplit(intakecode, ",")
 #Melt the data so that we can being to import the profile information
 final_daily_intake2<-as.data.frame(final_daily_intake2)
 final_daily_intake3 <- final_daily_intake2[,colSums(is.na(final_daily_intake2))<nrow(final_daily_intake2)]
-pruned<-final_daily_intake3[,c(1:2,7:12)]
+pruned<-final_daily_intake3[,c(1:2,7:15)]
 melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
 melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$value=="NA",]
 #Rename these variables

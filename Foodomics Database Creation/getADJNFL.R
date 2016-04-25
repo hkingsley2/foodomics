@@ -53,7 +53,7 @@
 ##########################################################################
               
               ####GRAND MERGED UNCALCULATED FOODOMICS UNREPLICATED
-              unCALC_unREPL_foodomicsDB<-merge(compiledNFD, referenceBASEP, by="PRODUCTNDID")  #this is dropping things that don't have matches??????
+              unCALC_unREPL_foodomicsDB<-merge(compiledNFD, referenceBASEP, by="PRODUCTNDID", all.x=TRUE)  #this is dropping things that don't have matches??????
               #rename for simplicity
               UCURdb<-unCALC_unREPL_foodomicsDB
     

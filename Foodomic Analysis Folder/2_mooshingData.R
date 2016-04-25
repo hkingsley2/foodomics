@@ -107,15 +107,19 @@ foodomics$MATCH_DATE<-as.Date(foodomics$MATCH_DATE)
 
 #get list of NDIDs he ate
 foodomics_eaten<- foodomics[foodomics$PRODUCTNDID %in% clean_Manyfoods_DI$value, ] 
-
+write.csv(foodomics , file="foodomicsTESTING.csv")
+foodomics_eaten<-foodomics_eaten[,c(1:179,581)]
 clean_Manyfoods_DI222<-clean_Manyfoods_DI[,-c(3:5,8:10)]
 clean_Manyfoods_DI222$PRODUCTNDID<-clean_Manyfoods_DI222$value
+clean_Manyfoods_DI222<-clean_Manyfoods_DI222[,c(1:2,4:6)]
 memory.limit(size=20000)
 temp <- abs(outer(clean_Manyfoods_DI222$MATCH_DATE,foodomics_eaten$MATCH_DATE,"-"))
 ind <- apply(temp, 1, function(i) which.min(i))
 ind<-as.numeric(ind)
 result <- cbind(clean_Manyfoods_DI222, foodomics_eaten[ind,])
 write.csv(result , file="result_not_summed.csv")
+write.csv(clean_Manyfoods_DI222 , file="clean_Manyfoods_DI222.csv")
+write.csv(foodomics_eaten , file="foodomics_eatenind.csv")
 
 
 check_dates <- abs(outer(clean_Manyfoods_DI222$MATCH_DATE,foodomics_eaten$MATCH_DATE,"-")) #finds the closest date for every field pairing
@@ -139,7 +143,7 @@ write.csv(result3, file="result_scaled.csv")
 #Columns to use in the sum for daily summary
 #result4<-result3[,-c(1)]
 #result_daily[,c(-175)] <- sapply(result_daily[,c(-175)], as.numeric)
-result_daily_summed <- aggregate(x = result3[,-c(40:43,187)],
+result_daily_summed <- aggregate(x = result3[,-c(1,41:44,168:187)],
                                  FUN = sum,
                                  by = list(Group.date = result3$MATCH_DATE), na.rm=TRUE)
 
