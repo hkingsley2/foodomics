@@ -133,7 +133,7 @@ write.csv(result , file="result_not_summed.csv")
 
 
 #Calculations
-result2 <- result[,c(1:5,19:204)]
+result2 <- result[,c(1:5,19:185)]
 result2[,-c(1:5)] <- sapply(result2[,-c(1:5)], as.numeric)
 result3=as.data.frame(apply( result2[,-c(1:5)], 2, function(x) x *  result2$Intake / 100))
 result3$MATCH_DATE<-result2$MATCH_DATE
