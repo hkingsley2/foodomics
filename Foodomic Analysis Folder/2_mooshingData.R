@@ -1,6 +1,6 @@
 setwd(patientfolder)
 daily_menus<-read.csv(file='Menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
-
+  
 
 library(dplyr)
 #convert menus intakes to lowercase ID values

@@ -1,7 +1,7 @@
 #######################################################
 ###Manipulating Patient Data to get it ready to view###
 #######################################################
-
+   
 setwd("Z:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data for foodomics")
 
 #Fixing dates
