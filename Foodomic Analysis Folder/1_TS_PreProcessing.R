@@ -5,7 +5,7 @@
 #SET PATIENT FOLDER
 
 #if current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/RoAr01456840"
+patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/JeKi01030840/test"
 
 #if non current
 patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/HaZe1225262_AJ33KGN/Test"
@@ -193,8 +193,40 @@ final_daily_intake2<-final_daily_intake[,intakecode:=na.locf(intakecode,na.rm=TR
 
 final_daily_intake2<-final_daily_intake2[,intakecode:=na.locf(intakecode,na.rm=TRUE,fromLast=TRUE)]
 
+####################################################################
+###############
+###COUNT NA####
+###############
+
+library(stringr)
+getCount <- function(data,keyword)
+{
+  wcount <- str_count(final_daily_intake2$intakecode, keyword)
+  new<-cbind(data,wcount)
+  list2env(new,.GlobalEnv)
+}
+getCount(final_daily_intake2,'NA')
+test2<-data.frame(final_daily_intake2,wcount)
+names(test2)[names(test2)=="wcount"] <- "NA_MEALS"
+
+###############
+###COUNT ,#####
+###############
+library(stringr)
+getCount2 <- function(data,keyword)
+{
+  wcount <- str_count(test2$intakecode, keyword)
+  new<-cbind(data,wcount)
+  list2env(new,.GlobalEnv)
+}
+getCount2(test2,',')
+test3<-data.frame(test2,wcount)
+names(test3)[names(test3)=="wcount"] <- "COMMAS"
+
+maxval <- max(test3[,c("COMMAS")]-test3[,c("NA_MEALS")]) +1
+####################################################################\
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
-setDT(final_daily_intake2)[, paste0("Column", 1:2) := tstrsplit(intakecode, ",")]
+setDT(final_daily_intake2)[, paste0("Column", 1:maxval) := tstrsplit(intakecode, ",")]
 
 #Melt the data so that we can being to import the profile information
 final_daily_intake2<-as.data.frame(final_daily_intake2)
