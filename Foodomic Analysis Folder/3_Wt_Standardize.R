@@ -12,19 +12,14 @@ weights$Group.date<-as.Date(weights$Group.date)
 food_and_weight<-merge(result_daily_summed, weights, by=c("Group.date"))
 
 #Doing division
-
 food_and_weight[,-c(1, 164:165)]=as.data.frame(apply(food_and_weight[,-c(1, 164:165)], 2, function(x) x / food_and_weight$WT))
-
 food_and_weight_clean<-food_and_weight[,-c(164:165)]
 setwd(patientfolder)
 write.csv(food_and_weight_clean, file="daily_food_and_weight_clean.csv")
 
-
-
 parameters<-names(food_and_weight_clean)
 
 #PLOT every nutrient
-
 library(ggplot2)
 
 # Make list of variable names to loop over.

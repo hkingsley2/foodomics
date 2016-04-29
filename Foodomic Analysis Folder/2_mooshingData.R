@@ -1,15 +1,12 @@
 setwd(patientfolder)
 daily_menus<-read.csv(file='Menus.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
-  
 
 library(dplyr)
 #convert menus intakes to lowercase ID values
 daily_menus$PKT_Recipe_Number<-tolower(daily_menus$PKT_Recipe_Number)
 
-
 setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
 foodomics<-readRDS(file="foodomics_DB_Apr_27_2016_08_29_06.rds")
-
 
 setwd(patientfolder)
 library(lubridate)
@@ -17,7 +14,6 @@ library(data.table)
 dt <- data.table(daily_menus) #after this the date is mm/dd/yy 12:00 AM
 test5<-dt[, number := 1:.N, by=c("MRNUMBER","PKT_Recipe_Number")] #this numbers every row in the dt by date
 data<-as.data.frame(test5) #this converts the dt to a dataframe
-
 
 #Make Menus in Wide Format
 menus_ID<-data[,c("MRNUMBER","PKT_Recipe_Number","Ingredient_ID", "number")]
@@ -56,30 +52,8 @@ write.csv(Manyfoods_DI_2 , file="Manyfoods_DI_2.csv")
 clean_Manyfoods_DI_2<-Manyfoods_DI_2[!is.na(Manyfoods_DI_2$value),]
 
 ####NOW COMBINE THE DATAFRAME WITH THE INGREDIENT NUMBERS AND AMOUNTS
-
-
-############
-############
-############
-############
-############
-#WINNER#####
-############
-############
-############
-############
 clean_Manyfoods_DI$Intake<-clean_Manyfoods_DI_2$value
 write.csv(clean_Manyfoods_DI, file="clean_Manyfoods_DI_comb.csv")
-############
-############
-############
-############
-############
-#WINNER#####
-############
-############
-############
-############
 
 #fix dates so we can match appropriate profiles
 foodomics$Date_Obtained<-as.numeric(foodomics$Date_Obtained)
@@ -121,7 +95,6 @@ write.csv(result , file="result_not_summed.csv")
 write.csv(clean_Manyfoods_DI222 , file="clean_Manyfoods_DI222.csv")
 write.csv(foodomics_eaten , file="foodomics_eatenind.csv")
 
-
 check_dates <- abs(outer(clean_Manyfoods_DI222$MATCH_DATE,foodomics_eaten$MATCH_DATE,"-")) #finds the closest date for every field pairing
 check_ndid <- outer(clean_Manyfoods_DI222$PRODUCTNDID,foodomics_eaten$PRODUCTNDID,"==") #determines if the NDID was the same for each field pairing
 check_ndid[check_ndid==0]<-NA #changes 0 to NA
@@ -141,12 +114,8 @@ write.csv(result3, file="result_scaled.csv")
 
 
 #Columns to use in the sum for daily summary
-#result4<-result3[,-c(1)]
-#result_daily[,c(-175)] <- sapply(result_daily[,c(-175)], as.numeric)
 result_daily_summed <- aggregate(x = result3[,-c(40:43,167:168)],
                                  FUN = sum,
                                  by = list(Group.date = result3$MATCH_DATE), na.rm=TRUE)
 
-#result4 %>% group_by(MATCH_DATE) %>% summarise_each(funs(sum))
-#notworking<-by(result4, result4$MATCH_DATE, function(x) colSums(result4[,-c(175)]))
 write.csv(result_daily_summed, file="result_daily_summed.csv")
