@@ -2,10 +2,10 @@
 ###Manipulating Patient Data to get it ready to view###
 #######################################################
    
-setwd("Z:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data for foodomics")
+setwd("G:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data for foodomics")
 
 #Fixing dates
-weights<-read.csv(file="KG0087.txt", sep="\t", header=TRUE, stringsAsFactors = FALSE)
+weights<-read.csv(file=kgid, sep="\t", header=TRUE, stringsAsFactors = FALSE)
 names(weights)[names(weights) == 'Date'] <- 'Group.date'
 weights$Group.date<-as.POSIXlt(weights$Group.date,format="%m/%d/%y")
 weights$Group.date<-as.Date(weights$Group.date)

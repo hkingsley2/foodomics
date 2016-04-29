@@ -4,11 +4,6 @@
 
 #SET PATIENT FOLDER
 
-#if current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/JeKi01030840/test"
-
-#if non current
-patientfolder<-"Z:/Data_D/D18/Clinic/Patient Folders/Non-Current Patients/HaZe1225262_AJ33KGN/Test"
 
 #Required Packages (these will install if you don't have them installed)
 
@@ -224,6 +219,7 @@ test3<-data.frame(test2,wcount)
 names(test3)[names(test3)=="wcount"] <- "COMMAS"
 
 maxval <- max(test3[,c("COMMAS")]-test3[,c("NA_MEALS")]) +1
+maxvalcols <- maxval-1+7
 ####################################################################\
 ##TEXT TO COLUMNS FOR INTAKE CODE DATA, probably not ready to go yet
 setDT(final_daily_intake2)[, paste0("Column", 1:maxval) := tstrsplit(intakecode, ",")]
@@ -231,7 +227,7 @@ setDT(final_daily_intake2)[, paste0("Column", 1:maxval) := tstrsplit(intakecode,
 #Melt the data so that we can being to import the profile information
 final_daily_intake2<-as.data.frame(final_daily_intake2)
 final_daily_intake3 <- final_daily_intake2[,colSums(is.na(final_daily_intake2))<nrow(final_daily_intake2)]
-pruned<-final_daily_intake3[,c(1:2,7:15)]
+pruned<-final_daily_intake3[,c(1:2,7:maxvalcols)]
 melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
 melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$value=="NA",]
 #Rename these variables
