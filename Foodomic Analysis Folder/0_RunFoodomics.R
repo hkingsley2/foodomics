@@ -2,8 +2,8 @@
 
 #First, set variables
 
-patientfolder<-"G:/Data_D/D18/Clinic/Patient Folders/XXXXXXXXXXXXXX"
-kgid<-"KGXXXX.txt"
+patientfolder<-"G:/Data_D/D18/Clinic/Patient Folders/ThSc02185176"
+kgid<-"KG0232.txt"
 
 #Second, run a foodomics analysis
 

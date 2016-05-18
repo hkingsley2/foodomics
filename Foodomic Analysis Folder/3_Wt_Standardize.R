@@ -6,10 +6,10 @@ setwd("G:/MySQL Database/Anthros/Database_Ready/Test Patients/Interpolated data 
 
 #Fixing dates
 weights<-read.csv(file=kgid, sep="\t", header=TRUE, stringsAsFactors = FALSE)
-names(weights)[names(weights) == 'Date'] <- 'Group.date'
-weights$Group.date<-as.POSIXlt(weights$Group.date,format="%m/%d/%y")
-weights$Group.date<-as.Date(weights$Group.date)
-food_and_weight<-merge(result_daily_summed, weights, by=c("Group.date"))
+names(weights)[names(weights) == 'Date'] <- 'Group_date'
+weights$Group_date<-as.POSIXlt(weights$Group_date,format="%m/%d/%y")
+weights$Group_date<-as.Date(weights$Group_date)
+food_and_weight<-merge(result_daily_summed, weights, by=c("Group_date"))
 
 #Doing division
 food_and_weight[,-c(1, 164:165)]=as.data.frame(apply(food_and_weight[,-c(1, 164:165)], 2, function(x) x / food_and_weight$WT))

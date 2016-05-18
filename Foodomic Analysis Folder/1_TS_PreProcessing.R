@@ -59,7 +59,7 @@ setwd(patientfolder)
 daily_intakes<-read.csv(file='Daily_Intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
 #Take first two columns that have Date and ME number information
-daily_intakes<-daily_intakes[,c(1:3)]
+daily_intakes<-daily_intakes[,c(1:4)]
 
 #Rename these variables
 daily_intakes<-rename(daily_intakes, ME=PKT_Recipe_Number)
@@ -68,14 +68,14 @@ dt <- data.table(daily_intakes) #after this the date is mm/dd/yy 12:00 AM
 test<-dt[, number := 1:.N, by = Date] #this numbers every row in the dt by date
 data<-as.data.frame(test) #this converts the dt to a dataframe
 
-data_wide <- reshape(data, direction="wide", idvar = c("MRNUMBER","Date"), timevar = "number")
+data_wide <- reshape(data, direction="wide", idvar = c("MRNUMBER","Date","Source"), timevar = "number")
 
 #This pastes all ME columns together
-cols<-names(data_wide[, c(3:ncol(data_wide))])
+cols<-names(data_wide[, c(4:ncol(data_wide))])
 data_wide$intakecode<- as.factor(ifelse(is.na(data_wide$ME.1), data_wide$ME.1,
                                         apply( data_wide[ , cols ] , 1 , paste , collapse = "," )))
 
-data_wide<-data_wide[,c("MRNUMBER","Date","intakecode")]
+data_wide<-data_wide[,c("MRNUMBER","Date","Source","intakecode")]
 
 #################
 ###TIME SERIES###
@@ -100,7 +100,7 @@ final$Date<-row.names(final)
 setwd(patientfolder)
 data_type<-read.csv(file='Daily_Intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
 
-Data.Type<-data_type[,c(1,2,4)]
+Data.Type<-data_type[,c(1,2,5)]
 #Data.Type<-rename(Data.Type, Date=Date.of.Intake)
 Data.Type<-rename(Data.Type, DATT=Data_Quality)
 Data.Type<-aggregate(Data.Type$DATT, by=list(Data.Type$Date,Data.Type$MRNUMBER), max)
@@ -123,7 +123,7 @@ Data.Type$Date<-row.names(Data.Type)
 #Get the data and aggregate it so that there is only one value per date
 setwd(patientfolder)
 day_type<-read.csv(file='Daily_Intake.txt', header=TRUE, sep="\t", na.strings=c("","NA"))
-Day.Type<-day_type[,c(1,2,5)]
+Day.Type<-day_type[,c(1,2,6)]
 Day.Type<-rename(Day.Type, DAYT=Day_Quality)
 Day.Type<-aggregate(Day.Type$DAYT, by=list(Day.Type$Date,Day.Type$MRNUMBER), max)
 Day.Type<-rename(Day.Type, Date=Group.1)
@@ -227,9 +227,10 @@ setDT(final_daily_intake2)[, paste0("Column", 1:maxval) := tstrsplit(intakecode,
 #Melt the data so that we can being to import the profile information
 final_daily_intake2<-as.data.frame(final_daily_intake2)
 final_daily_intake3 <- final_daily_intake2[,colSums(is.na(final_daily_intake2))<nrow(final_daily_intake2)]
-pruned<-final_daily_intake3[,c(1:2,7:maxvalcols)]
-melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER"))
+pruned<-final_daily_intake3[,c(1:3,5:6,8:maxvalcols)]
+melted_daily_intakes<-melt(pruned, id.vars = c("Date","MRNUMBER","Source","DAYT","DATT"))
 melted_daily_intakes<-melted_daily_intakes[!melted_daily_intakes$value=="NA",]
 #Rename these variables
 melted_daily_intakes<-rename(melted_daily_intakes, PKT_Recipe_Number=value)
+melted_daily_intakes<-melted_daily_intakes[,-c(6)]
 write.csv(melted_daily_intakes , file="melted_daily_intakes.csv")
