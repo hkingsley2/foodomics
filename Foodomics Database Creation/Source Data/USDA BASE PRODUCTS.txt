@@ -1659,3 +1659,63 @@ RNFD02894	No base product		1	1
 RNFD02895	No base product		1	1
 RNFD02896	No base product		1	1
 RNFD02900	No base product		1	1
+RNFD02897	No base product		but we need an amount?????????????????	
+RNFD02898	No base product		vitamin E but we need an amount??????????	
+	Turkey dark meat	ND03121		
+RNFD02754	No base product			DHA
+	"Lobster, northern, cooked moist heat"	ND06463		
+	"Catfish, channel, farmed, cooked, dry heat"	ND06547		
+	"Veal, loin, lean only, roasted"	ND07044		
+RNFD02756	Members Mark Dietary Supplement (Multivitamin)			
+	"Salmon, fresh, Atlantic, farmed, cooked"	RNFD00737		
+RNFD02755				Lecithin
+RNFD01489	Kraft Deli Deluxe American Cheese Slices (8 pack)			
+	"Shrimp, cooked moist heat"	RNFD00500		
+Lays regular potato chips 		RNFD02893 		
+Leader Calcium 500 mg + D 400 IU				
+	"Sweeteners, tabletop, sucralose, SPLENDA packets"	RNFD02441		
+	Tea	RNFD01580		
+	"Turkey, from whole, dark meat, cooked, roasted"	RNFD02509		
+RNFD02724	No base product			Biotin
+RNFD01320	Jones All Natural Pork Sausages (8 patties)			
+RNFD02541	Velveeta			
+RNFD02725	No base product			Thiamin
+				
+				
+				
+				
+	More N/A's: 	#N/A		
+ Th sc	ND00356	#N/A		
+ Th sc	ND00370	#N/A		
+ Th sc	ND00426	#N/A		
+ Th sc	ND00472	#N/A		
+ Th sc	ND00608	#N/A		
+ Th sc	ND00818	#N/A		
+ Th sc	ND00833	#N/A		
+ Th sc	ND00945	#N/A		
+ Th sc	ND00967	#N/A		
+ Th sc	ND01051	#N/A		
+ Th sc	ND01093	#N/A		
+ Th sc	ND01204	#N/A		
+	ND03121	#N/A		
+	ND04947	#N/A		
+	ND06463	#N/A		
+	ND06547	#N/A		
+	ND07044	#N/A		
+	RNFD00500	#N/A		
+ Th sc	RNFD00570	#N/A		
+	RNFD00737	#N/A		
+	RNFD01320	#N/A		
+	RNFD01489	#N/A		
+	RNFD02541	#N/A		
+	RNFD02724	#N/A		
+	RNFD02725	#N/A		
+	RNFD02754	#N/A		
+	RNFD02755	#N/A		
+	RNFD02756	#N/A		
+	RNFD0282	#N/A		
+ Th sc	RNFD02821	#N/A		
+ Th sc	RNFD02872	#N/A		
+	RNFD02889 	#N/A		
+	RNFD02897	#N/A		
+	RNFD02898	#N/A		

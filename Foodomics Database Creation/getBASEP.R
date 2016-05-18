@@ -69,6 +69,69 @@
               library(dplyr)
               referenceBASEP<- preSCALING2 %>% group_by(PRODUCTNDID) %>% summarise_each(funs(sum))
 
+######################################
+#####CONVERT VITAMIN MINERAL UNITS####
+######################################
+              
+              referenceBASEP$`X313`<-referenceBASEP$`X313`*0.000001
+              referenceBASEP$`X317`<-referenceBASEP$`X317`*0.000001
+              referenceBASEP$`X319`<-referenceBASEP$`X319`*0.000001
+              referenceBASEP$`X320`<-referenceBASEP$`X320`*0.000001
+              referenceBASEP$`X321`<-referenceBASEP$`X321`*0.000001
+              referenceBASEP$`X322`<-referenceBASEP$`X322`*0.000001
+              referenceBASEP$`X325`<-referenceBASEP$`X325`*0.000001
+              referenceBASEP$`X326`<-referenceBASEP$`X326`*0.000001
+              referenceBASEP$`X328`<-referenceBASEP$`X328`*0.000001
+              referenceBASEP$`X334`<-referenceBASEP$`X334`*0.000001
+              referenceBASEP$`X337`<-referenceBASEP$`X337`*0.000001
+              referenceBASEP$`X338`<-referenceBASEP$`X338`*0.000001
+              referenceBASEP$`X417`<-referenceBASEP$`X417`*0.000001
+              referenceBASEP$`X418`<-referenceBASEP$`X418`*0.000001
+              referenceBASEP$`X428`<-referenceBASEP$`X428`*0.000001
+              referenceBASEP$`X429`<-referenceBASEP$`X429`*0.000001
+              referenceBASEP$`X430`<-referenceBASEP$`X430`*0.000001
+              referenceBASEP$`X431`<-referenceBASEP$`X431`*0.000001
+              referenceBASEP$`X432`<-referenceBASEP$`X432`*0.000001
+              referenceBASEP$`X435`<-referenceBASEP$`X435`*0.000001
+              referenceBASEP$`X578`<-referenceBASEP$`X578`*0.000001
+              referenceBASEP$`X318`<-referenceBASEP$`X318`*0.025*0.001
+              referenceBASEP$`X324`<-referenceBASEP$`X324`* 0.3*0.001
+              referenceBASEP$`X262`<-referenceBASEP$`X262`*0.001
+              referenceBASEP$`X263`<-referenceBASEP$`X263`*0.001
+              referenceBASEP$`X301`<-referenceBASEP$`X301`*0.001
+              referenceBASEP$`X303`<-referenceBASEP$`X303`*0.001
+              referenceBASEP$`X304`<-referenceBASEP$`X304`*0.001
+              referenceBASEP$`X305`<-referenceBASEP$`X305`*0.001
+              referenceBASEP$`X306`<-referenceBASEP$`X306`*0.001
+              referenceBASEP$`X307`<-referenceBASEP$`X307`*0.001
+              referenceBASEP$`X309`<-referenceBASEP$`X309`*0.001
+              referenceBASEP$`X312`<-referenceBASEP$`X312`*0.001
+              referenceBASEP$`X315`<-referenceBASEP$`X315`*0.001
+              referenceBASEP$`X323`<-referenceBASEP$`X323`*0.001
+              referenceBASEP$`X341`<-referenceBASEP$`X341`*0.001
+              referenceBASEP$`X342`<-referenceBASEP$`X342`*0.001
+              referenceBASEP$`X343`<-referenceBASEP$`X343`*0.001
+              referenceBASEP$`X344`<-referenceBASEP$`X344`*0.001
+              referenceBASEP$`X345`<-referenceBASEP$`X345`*0.001
+              referenceBASEP$`X346`<-referenceBASEP$`X346`*0.001
+              referenceBASEP$`X347`<-referenceBASEP$`X347`*0.001
+              referenceBASEP$`X401`<-referenceBASEP$`X401`*0.001
+              referenceBASEP$`X404`<-referenceBASEP$`X404`*0.001
+              referenceBASEP$`X405`<-referenceBASEP$`X405`*0.001
+              referenceBASEP$`X406`<-referenceBASEP$`X406`*0.001
+              referenceBASEP$`X410`<-referenceBASEP$`X410`*0.001
+              referenceBASEP$`X415`<-referenceBASEP$`X415`*0.001
+              referenceBASEP$`X421`<-referenceBASEP$`X421`*0.001
+              referenceBASEP$`X454`<-referenceBASEP$`X454`*0.001
+              referenceBASEP$`X573`<-referenceBASEP$`X573`*0.001
+              referenceBASEP$`X601`<-referenceBASEP$`X601`*0.001
+              referenceBASEP$`X636`<-referenceBASEP$`X636`*0.001
+              referenceBASEP$`X638`<-referenceBASEP$`X638`*0.001
+              referenceBASEP$`X639`<-referenceBASEP$`X639`*0.001
+              referenceBASEP$`X641`<-referenceBASEP$`X641`*0.001
+              
+              
+              
 #####################
 #####SAVE RESULTS####
 #####################
