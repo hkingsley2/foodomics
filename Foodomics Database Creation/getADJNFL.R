@@ -39,6 +39,9 @@
               #Put baby foods back into the main database
               compiledNFD<-rbind(compiledNFD,baby_foods)
               
+              #Convert any units that are not in grams to gram units
+              source("convert_NFD_to_g.R")
+              
 #########################
 #####MAYBE GET RID OF####
 #########################
@@ -244,10 +247,6 @@
                                                UCURdb$FNA_F18D3CN3,
                                                UCURdb$FNA_F18D3CN6,
                                                UCURdb$FNA_F183I,
-                                               UCURdb$FNA_F16D1,
-                                               UCURdb$FNA_F18D1,
-                                               UCURdb$FNA_F18D2,
-                                               UCURdb$FNA_F18D3,
                                                UCURdb$FNA_F16D1_OTHER,
                                                UCURdb$FNA_F18D1_OTHER,
                                                UCURdb$FNA_F18D2_OTHER,
@@ -269,9 +268,6 @@
                                                     UCURdb$FNA_F20D4N6,
                                                     UCURdb$FNA_F22D1C,
                                                     UCURdb$FNA_F22D1T,
-                                                    UCURdb$FNA_F20D3,
-                                                    UCURdb$FNA_F20D4,
-                                                    UCURdb$FNA_F22D1,
                                                     UCURdb$FNA_F20D3_OTHER,
                                                     UCURdb$FNA_F20D4_OTHER,
                                                     UCURdb$FNA_F22D1_OTHER),1,sum,na.rm = TRUE)

@@ -1,6 +1,5 @@
 #Get USDA products eaten
 
-
 #(1)
 #Read in the USDA database
 setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
@@ -21,10 +20,76 @@ neededUSDA<-USDAweightedNFD[,c(1,6)]
 #(3) Merge USDA DB with the weighted part
 eatenUSDAfoods <- unique(merge(neededUSDA, USDA, by="NDB_No"))
 
-
 #The result is a formatted USDA database with NDID labels as PRODUCT NDID that can be concatenated
 
-#We just need to add the right coulmn headers
+#We just need to add the right column headers
+
+############################################
+#####FIRST CONVERT VITAMIN MINERAL UNITS####
+############################################
+
+eatenUSDAfoods$`X313`<-eatenUSDAfoods$`X313`*0.000001
+eatenUSDAfoods$`X317`<-eatenUSDAfoods$`X317`*0.000001
+eatenUSDAfoods$`X319`<-eatenUSDAfoods$`X319`*0.000001
+eatenUSDAfoods$`X320`<-eatenUSDAfoods$`X320`*0.000001
+eatenUSDAfoods$`X321`<-eatenUSDAfoods$`X321`*0.000001
+eatenUSDAfoods$`X322`<-eatenUSDAfoods$`X322`*0.000001
+eatenUSDAfoods$`X325`<-eatenUSDAfoods$`X325`*0.000001
+eatenUSDAfoods$`X326`<-eatenUSDAfoods$`X326`*0.000001
+eatenUSDAfoods$`X328`<-eatenUSDAfoods$`X328`*0.000001
+eatenUSDAfoods$`X334`<-eatenUSDAfoods$`X334`*0.000001
+eatenUSDAfoods$`X337`<-eatenUSDAfoods$`X337`*0.000001
+eatenUSDAfoods$`X338`<-eatenUSDAfoods$`X338`*0.000001
+eatenUSDAfoods$`X417`<-eatenUSDAfoods$`X417`*0.000001
+eatenUSDAfoods$`X418`<-eatenUSDAfoods$`X418`*0.000001
+eatenUSDAfoods$`X428`<-eatenUSDAfoods$`X428`*0.000001
+eatenUSDAfoods$`X429`<-eatenUSDAfoods$`X429`*0.000001
+eatenUSDAfoods$`X430`<-eatenUSDAfoods$`X430`*0.000001
+eatenUSDAfoods$`X431`<-eatenUSDAfoods$`X431`*0.000001
+eatenUSDAfoods$`X432`<-eatenUSDAfoods$`X432`*0.000001
+eatenUSDAfoods$`X435`<-eatenUSDAfoods$`X435`*0.000001
+eatenUSDAfoods$`X578`<-eatenUSDAfoods$`X578`*0.000001
+eatenUSDAfoods$`X318`<-eatenUSDAfoods$`X318`*0.025*0.001
+eatenUSDAfoods$`X324`<-eatenUSDAfoods$`X324`* 0.3*0.001
+eatenUSDAfoods$`X262`<-eatenUSDAfoods$`X262`*0.001
+eatenUSDAfoods$`X263`<-eatenUSDAfoods$`X263`*0.001
+eatenUSDAfoods$`X301`<-eatenUSDAfoods$`X301`*0.001
+eatenUSDAfoods$`X303`<-eatenUSDAfoods$`X303`*0.001
+eatenUSDAfoods$`X304`<-eatenUSDAfoods$`X304`*0.001
+eatenUSDAfoods$`X305`<-eatenUSDAfoods$`X305`*0.001
+eatenUSDAfoods$`X306`<-eatenUSDAfoods$`X306`*0.001
+eatenUSDAfoods$`X307`<-eatenUSDAfoods$`X307`*0.001
+eatenUSDAfoods$`X309`<-eatenUSDAfoods$`X309`*0.001
+eatenUSDAfoods$`X312`<-eatenUSDAfoods$`X312`*0.001
+eatenUSDAfoods$`X315`<-eatenUSDAfoods$`X315`*0.001
+eatenUSDAfoods$`X323`<-eatenUSDAfoods$`X323`*0.001
+eatenUSDAfoods$`X341`<-eatenUSDAfoods$`X341`*0.001
+eatenUSDAfoods$`X342`<-eatenUSDAfoods$`X342`*0.001
+eatenUSDAfoods$`X343`<-eatenUSDAfoods$`X343`*0.001
+eatenUSDAfoods$`X344`<-eatenUSDAfoods$`X344`*0.001
+eatenUSDAfoods$`X345`<-eatenUSDAfoods$`X345`*0.001
+eatenUSDAfoods$`X346`<-eatenUSDAfoods$`X346`*0.001
+eatenUSDAfoods$`X347`<-eatenUSDAfoods$`X347`*0.001
+eatenUSDAfoods$`X401`<-eatenUSDAfoods$`X401`*0.001
+eatenUSDAfoods$`X404`<-eatenUSDAfoods$`X404`*0.001
+eatenUSDAfoods$`X405`<-eatenUSDAfoods$`X405`*0.001
+eatenUSDAfoods$`X406`<-eatenUSDAfoods$`X406`*0.001
+eatenUSDAfoods$`X410`<-eatenUSDAfoods$`X410`*0.001
+eatenUSDAfoods$`X415`<-eatenUSDAfoods$`X415`*0.001
+eatenUSDAfoods$`X421`<-eatenUSDAfoods$`X421`*0.001
+eatenUSDAfoods$`X454`<-eatenUSDAfoods$`X454`*0.001
+eatenUSDAfoods$`X573`<-eatenUSDAfoods$`X573`*0.001
+eatenUSDAfoods$`X601`<-eatenUSDAfoods$`X601`*0.001
+eatenUSDAfoods$`X636`<-eatenUSDAfoods$`X636`*0.001
+eatenUSDAfoods$`X638`<-eatenUSDAfoods$`X638`*0.001
+eatenUSDAfoods$`X639`<-eatenUSDAfoods$`X639`*0.001
+eatenUSDAfoods$`X641`<-eatenUSDAfoods$`X641`*0.001
+
+
+
+
+
+
 ########################################################
 #####Create a USDA dataframe with the FNA column headers
 ########################################################
