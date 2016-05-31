@@ -18,6 +18,11 @@ if(!require(shinydashboard)){
   library(shinydashboard) #for formatting structure of data
 }
 
+if(!require(ggplot2)){
+  install.packages("ggplot2")
+  library(ggplot2) #for formatting structure of data
+}
+
 #Create header for dashboard page
 header<-dashboardHeader(title = HTML(paste(icon('globe'),'Foodomics Database')))
 
@@ -49,7 +54,11 @@ body<-dashboardBody(
         
           actionButton("submit", "Submit New Food"),
           actionButton("edit", "Update Food"),
-          actionButton("delete", "Delete Food")
+          actionButton("delete", "Delete Food"),
+          fileInput('file1', '',accept = c('.jpg','.jpeg')),
+          actionButton("downloadFile1", "Send Photo"),
+          imageOutput('outputImage')
+
       
           )
       )

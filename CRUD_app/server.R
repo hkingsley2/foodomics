@@ -20,7 +20,6 @@ if(!require(shinydashboard)){
 
 
 
-
 fields <- c(Year="Year",
             NDID="NDID",
             Calories_per_serving_kcal="Calories_per_serving_kcal",
@@ -97,8 +96,60 @@ server <- shinyServer(
       data
     })
     
+    #Dealing with uploaded photos
+    
+    output$outputImage <- renderImage({
+      ###This is to plot uploaded image###
+      if (is.null(input$file1)){
+        outfile <- "G:\\Data_D\\D18\\NFD\\Pictures for NFD\\2016\\Done\\NDID 00001-00100\\ND00001_C_232016_SH_PB.jpg"
+        contentType <- "image/jpg"
+        #Panda image is the default
+      }else{
+        outfile <- input$file1$datapath
+        contentType <- input$file1$type
+        #Uploaded file otherwise
+      }
+      
+      list(src = outfile,
+           contentType=contentType,
+           width=100)
+    }, deleteFile = TRUE)
+    
+
+    plotInput <- function(){
+      list(src = input$file1$datapath,
+           contentType=input$file1$type)
+    }
+    
+    plotInput2 = function () {
+
+      list(src = input$file1,
+           outfile = input$file1$datapath,
+           contentType = input$file1$type)
+
+      
+    }
+
+    output$downloadFile1 <- downloadHandler(
+      filename = function() { paste0(input$file1, sep='') },
+      
+      content = function(file) {
+        jpeg(file)
+        plotInput2()
+        dev.off()
+
+      },
+      contentType=input$file1$type
+    )
+    
     
     # When buttons are clicked, run the appropriate function with the form data
+    observeEvent(input$downloadFile1, { 
+
+
+      })
+    
+    
     observeEvent(input$submit, { save_data_mysql(formData()) })
     observeEvent(input$delete, { delete_data_mysql(input$rows, formData()) })
     observeEvent(input$edit, { edit_data_mysql(input$rows, formData()) })
