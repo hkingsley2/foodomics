@@ -67,7 +67,7 @@ load_data_mysql <- function() {
 }
 
 load_data_makemeals <- function() {
-  query <- sprintf("SELECT * FROM %s WHERE Year='2001'", TABLE_NAME)
+  query <- sprintf("SELECT * FROM %s WHERE Year='2001' AND Pend_Food!='TRUE'", TABLE_NAME)
   mysql_query(query)
 }
 

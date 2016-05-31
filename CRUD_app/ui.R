@@ -47,9 +47,9 @@ body<-dashboardBody(
           numericInput("Polyunsaturated_Fat_per_serving_g","Polyunsaturated_Fat_per_serving_g",""),
           checkboxInput("Pend_Food","Pend this Food",value=TRUE, width=NULL),
         
-          actionButton("submit", "Submit"),
-          actionButton("edit", "Edit"),
-          actionButton("delete", "Delete")
+          actionButton("submit", "Submit New Food"),
+          actionButton("edit", "Update Food"),
+          actionButton("delete", "Delete Food")
       
           )
       )
@@ -65,7 +65,10 @@ body<-dashboardBody(
                      DT::dataTableOutput("makemeals")),
               #***Help Text***
               column(width = 3,
-                     helpText("Make PKT meals using these data."))
+                     helpText("Make PKT meals using these data."),
+                     helpText("Blue is lower than 25% of that nutrient"),
+                     helpText("White is between 25 and 75% of that nutrient"),
+                     helpText("Red is more than 75% of that nutrient"))
              )
     )
   )
