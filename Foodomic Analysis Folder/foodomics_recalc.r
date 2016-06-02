@@ -30,27 +30,32 @@ dataframe$calc_polyfat <- ifelse(dataframe$na_count ==1 & is.na(dataframe$calc_p
 
 
 #######by percent calculation I use the fat from the food database and devide it
-#######by the sum of the 4 individual fats in the food databases and
+#######by the sum of the individual fats in the food databasethat do not appear on the label and
 ######multiply it by the total fat on the food label 
 
+#creates a temporary set of columns that allows the percent calculation to work
+dataframe$calc_saturatedfat2 <- ifelse(!is.na(dataframe$Saturated_Fat_per_serving_g),NA,dataframe$X606)
+dataframe$calc_transfat2 <- ifelse(!is.na(dataframe$Trans_Fat_per_serving_g),NA,dataframe$X605)
+dataframe$calc_monofat2 <- ifelse(!is.na(dataframe$Monounsaturated_Fat_per_serving_g),NA,dataframe$X645)
+dataframe$calc_polyfat2 <- ifelse(!is.na(dataframe$Polyunsaturated_Fat_per_serving_g),NA,dataframe$X646)
 
 #if there are 2 NA's this fills in with a percent calcuation 
-dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_saturatedfat),dataframe$X606/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_saturatedfat)
-dataframe$calc_transfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_transfat),dataframe$X605/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_transfat)
-dataframe$calc_monofat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_monofat),dataframe$X645/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_monofat)
-dataframe$calc_polyfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_polyfat),dataframe$X646/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_polyfat)
+dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_saturatedfat),dataframe$X606/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_saturatedfat)
+dataframe$calc_transfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_transfat),dataframe$X605/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_transfat)
+dataframe$calc_monofat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_monofat),dataframe$X645/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_monofat)
+dataframe$calc_polyfat <- ifelse(dataframe$na_count == 2 & is.na(dataframe$calc_polyfat),dataframe$X646/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_polyfat)
 
 #if there are 3 NA's this fills in the data with amother percent cacluation
-dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_saturatedfat), dataframe$X606/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_saturatedfat)
-dataframe$calc_transfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_transfat), dataframe$X605/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_transfat)
-dataframe$calc_monofat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_monofat), dataframe$X645/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_monofat)
-dataframe$calc_polyfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_polyfat), dataframe$X646/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_polyfat)
+dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_saturatedfat), dataframe$X606/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_saturatedfat)
+dataframe$calc_transfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_transfat), dataframe$X605/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_transfat)
+dataframe$calc_monofat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_monofat), dataframe$X645/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_monofat)
+dataframe$calc_polyfat <- ifelse(dataframe$na_count == 3 & is.na(dataframe$calc_polyfat), dataframe$X646/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_polyfat)
 
 #if there are 4 NA's (only total fat is avalaible) this fills in with percent calculation 
-dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_saturatedfat), dataframe$X606/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_saturatedfat)
-dataframe$calc_transfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_transfat), dataframe$X605/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_transfat)
-dataframe$calc_monofat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_monofat), dataframe$X645/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_monofat)
-dataframe$calc_polyfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_polyfat), dataframe$X646/apply(dataframe[15:18],1,function(x) sum(x,na.rm=TRUE))*dataframe$calc_totalfat,dataframe$calc_polyfat)
+dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_saturatedfat), dataframe$X606/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_saturatedfat)
+dataframe$calc_transfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_transfat), dataframe$X605/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_transfat)
+dataframe$calc_monofat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_monofat), dataframe$X645/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_monofat)
+dataframe$calc_polyfat <- ifelse(dataframe$na_count == 4 & is.na(dataframe$calc_polyfat), dataframe$X646/apply(dataframe[25:28],1,function(x) sum(x,na.rm=TRUE))*(dataframe$calc_totalfat-apply(dataframe[10:13],1,function(x) sum(x,na.rm=TRUE))),dataframe$calc_polyfat)
 
 #if all 5 of the food label data is NA then just fill in with database data if possible
 dataframe$calc_totalfat <- ifelse(dataframe$na_count == 5 & is.na(dataframe$calc_totalfat),dataframe$X204,dataframe$calc_totalfat)
@@ -58,3 +63,12 @@ dataframe$calc_saturatedfat <- ifelse(dataframe$na_count == 5 & is.na(dataframe$
 dataframe$calc_transfat <- ifelse(dataframe$na_count == 5 & is.na(dataframe$calc_transfat), dataframe$X605,dataframe$calc_transfat)
 dataframe$calc_monofat <- ifelse(dataframe$na_count == 5 & is.na(dataframe$calc_monofat), dataframe$X645,dataframe$calc_monofat)
 dataframe$calc_polyfat <- ifelse(dataframe$na_count == 5 & is.na(dataframe$calc_polyfat), dataframe$X646,dataframe$calc_polyfat)
+
+#fixes problem where 0/0 provides NA when it should be producing 0
+dataframe$calc_saturatedfat <- ifelse(is.na(dataframe$calc_saturatedfat) & ((dataframe$calc_totalfat-apply(dataframe[20:23],1,function(x) sum(x,na.rm=TRUE))) == 0), 0, dataframe$calc_saturatedfat)
+dataframe$calc_transfat <- ifelse(is.na(dataframe$calc_transfat) & ((dataframe$calc_totalfat-apply(dataframe[20:23],1,function(x) sum(x,na.rm=TRUE))) == 0), 0, dataframe$calc_transfat)
+dataframe$calc_monofat <- ifelse(is.na(dataframe$calc_monofat) & ((dataframe$calc_totalfat-apply(dataframe[20:23],1,function(x) sum(x,na.rm=TRUE))) == 0), 0, dataframe$calc_monofat)
+dataframe$calc_polyfat <- ifelse(is.na(dataframe$calc_polyfat) & ((dataframe$calc_totalfat-apply(dataframe[20:23],1,function(x) sum(x,na.rm=TRUE))) == 0), 0, dataframe$calc_polyfat)
+
+#drops the temporary columns 
+dataframe <- dataframe [1:23]
