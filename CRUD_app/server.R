@@ -18,16 +18,39 @@ if(!require(shinydashboard)){
   library(shinydashboard) 
 }
 
+if(!require(shinyjs)){
+  install.packages("shinyjs")
+  library(shinyjs) 
+}
+
+if(!require(jpeg)){
+  install.packages("jpeg")
+  library(jpeg) 
+}
 
 
 fields <- c(Year="Year",
             NDID="NDID",
+            Serving_Size="Serving_Size",
+            Weight_per_serving_g="Weight_per_serving_g",
             Calories_per_serving_kcal="Calories_per_serving_kcal",
+            Total_Fat_per_serving_g="Total_Fat_per_serving_g",
             Saturated_Fat_per_serving_g="Saturated_Fat_per_serving_g",
-            Trans_Fat_per_serving_g="Trans_Fat_per_serving_g",
             Monounsaturated_Fat_per_serving_g="Monounsaturated_Fat_per_serving_g",
             Polyunsaturated_Fat_per_serving_g="Polyunsaturated_Fat_per_serving_g",
-            Pend_Food = "Pend_Food")
+            Trans_Fat_per_serving_g="Trans_Fat_per_serving_g",
+            Carbohydrate_per_serving_g="Carbohydrate_per_serving_g",
+            Dietary_Fiber_per_serving_g="Dietary_Fiber_per_serving_g",
+            Sugar_per_serving_g="Sugar_per_serving_g",
+            Protein_per_serving_g="Protein_per_serving_g",
+            Sodium_DV_per_serving="Sodium_DV_per_serving",
+            Potassium_DV_per_serving="Potassium_DV_per_serving",
+            Vitamin_A_DV_per_serving="Vitamin_A_DV_per_serving",
+            Vitamin_C_DV_per_serving="Vitamin_C_DV_per_serving",
+            Calcium_DV_per_serving="Calcium_DV_per_serving",
+            Iron_DV_per_serving="Iron_DV_per_serving",
+            Pend_Food = "Pend_Food",
+            Active= "Active")
 
 
 library(RMySQL)
@@ -38,7 +61,7 @@ options(mysql = list(
   dbname="borum_practice"
 )) 
 
-TABLE_NAME <- "foodomics_database_test"
+TABLE_NAME <- "foodomics_database_test2"
 
 save_data_mysql <- function(formdata) {
   query <- sprintf("INSERT INTO %s (%s) VALUES ('%s')", 
@@ -61,12 +84,17 @@ edit_data_mysql <- function(selected, formdata) {
 }
 
 load_data_mysql <- function() {
-  query <- sprintf("SELECT * FROM %s WHERE Year='2001'", TABLE_NAME)
+  query <- sprintf("SELECT * FROM %s WHERE Year='2001' ", TABLE_NAME)
   mysql_query(query)
 }
 
 load_data_makemeals <- function() {
-  query <- sprintf("SELECT * FROM %s WHERE Year='2001' AND Pend_Food!='TRUE'", TABLE_NAME)
+  query <- sprintf("SELECT * FROM %s WHERE Year='2001' AND Pend_Food!='TRUE' AND Active=TRUE", TABLE_NAME)
+  mysql_query(query)
+}
+
+load_data_auditmeals <- function() {
+  query <- sprintf("SELECT * FROM %s WHERE Year='2001' AND Pend_Food='TRUE'", TABLE_NAME)
   mysql_query(query)
 }
 
@@ -93,7 +121,39 @@ server <- shinyServer(
         input[[x]]
         }
       )
+
       data
+    })
+    
+    observe({
+      if (input$submit > 0 | input$edit > 0 | input$delete > 0) {
+        shinyjs::info("Submitted")
+      }
+    })
+    
+    #If form is empty, do not allow edit,update,delete buttons to work
+    
+    observe({
+      if (is.null(input$NDID) || input$NDID == "") {
+        shinyjs::disable("submit")
+        shinyjs::disable("edit")
+        shinyjs::disable("delete")
+      } else {
+        shinyjs::enable("submit")
+        shinyjs::enable("edit")
+        shinyjs::enable("delete")
+      }
+    })
+    
+    
+    observe({
+      if (is.null(input$file1) || input$file1 == "") {
+        shinyjs::disable("downloadFile1")
+
+      } else {
+        shinyjs::enable("downloadFile1")
+
+      }
     })
     
     #Dealing with uploaded photos
@@ -113,41 +173,25 @@ server <- shinyServer(
       list(src = outfile,
            contentType=contentType,
            width=100)
-    }, deleteFile = TRUE)
+    }, deleteFile = FALSE)
     
 
-    plotInput <- function(){
-      list(src = input$file1$datapath,
-           contentType=input$file1$type)
-    }
-    
-    plotInput2 = function () {
 
-      list(src = input$file1,
-           outfile = input$file1$datapath,
-           contentType = input$file1$type)
-
-      
-    }
-
-    output$downloadFile1 <- downloadHandler(
-      filename = function() { paste0(input$file1, sep='') },
-      
-      content = function(file) {
-        jpeg(file)
-        plotInput2()
-        dev.off()
-
-      },
-      contentType=input$file1$type
-    )
-    
     
     # When buttons are clicked, run the appropriate function with the form data
-    observeEvent(input$downloadFile1, { 
+  #  observeEvent(input$downloadFile1, { 
+      
+    #  outfile <- input$file1$datapath
+    #  jpg = readJPEG(outfile, native=T) # read the file
+    #  res = dim(jpg)[1:2] # get the resolution
 
+   #  plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),asp=1,type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
+   #  rasterImage(jpg,1,1,res[2],res[1])
+   #  file.copy(outfile, paste0("images\\", input$file1$name))
 
-      })
+    #need photos named differently
+    #need them saved in a differently
+  #    })
     
     
     observeEvent(input$submit, { save_data_mysql(formData()) })
@@ -156,12 +200,24 @@ server <- shinyServer(
     observeEvent(input$rows, {
       updateTextInput(session,"Year",value=input$rows[[3]])
       updateTextInput(session,"NDID",value=input$rows[[4]])
-      updateNumericInput(session,"Calories_per_serving_kcal",value=input$rows[[5]])
-      updateNumericInput(session,"Saturated_Fat_per_serving_g",value=input$rows[[6]])
-      updateNumericInput(session,"Trans_Fat_per_serving_g",value=input$rows[[7]])
-      updateNumericInput(session,"Monounsaturated_Fat_per_serving_g",value=input$rows[[8]])
-      updateNumericInput(session,"Polyunsaturated_Fat_per_serving_g",value=input$rows[[9]])
-      updateTextInput(session,"Pend_Food",value=input$rows[[10]])
+      updateTextInput(session,"Serving_Size",value=input$rows[[5]])
+      updateNumericInput(session,"Weight_per_serving_g",value=input$rows[[6]])
+      updateNumericInput(session,"Calories_per_serving_kcal",value=input$rows[[7]])
+      updateNumericInput(session,"Total_Fat_per_serving_g",value=input$rows[[8]])
+      updateNumericInput(session,"Saturated_Fat_per_serving_g",value=input$rows[[9]])
+      updateNumericInput(session,"Monounsaturated_Fat_per_serving_g",value=input$rows[[10]])
+      updateNumericInput(session,"Polyunsaturated_Fat_per_serving_g",value=input$rows[[11]])
+      updateNumericInput(session,"Trans_Fat_per_serving_g",value=input$rows[[12]])
+      updateNumericInput(session,"Carbohydrate_per_serving_g",value=input$rows[[13]])
+      updateNumericInput(session,"Dietary_Fiber_per_serving_g",value=input$rows[[14]])
+      updateNumericInput(session,"Sugar_per_serving_g",value=input$rows[[15]])
+      updateNumericInput(session,"Protein_per_serving_g",value=input$rows[[16]])
+      updateNumericInput(session,"Sodium_DV_per_serving",value=input$rows[[17]])
+      updateNumericInput(session,"Potassium_DV_per_serving",value=input$rows[[18]])
+      updateNumericInput(session,"Vitamin_A_DV_per_serving",value=input$rows[[19]])
+      updateNumericInput(session,"Vitamin_C_DV_per_serving",value=input$rows[[20]])
+      updateNumericInput(session,"Calcium_DV_per_serving",value=input$rows[[21]])
+      updateNumericInput(session,"Iron_DV_per_serving",value=input$rows[[22]])
       
       
     })
@@ -184,7 +240,7 @@ server <- shinyServer(
           $(this).addClass('selected');
           Shiny.onInputChange('rows', table.rows('.selected').data().toArray());
     });"),
-        options = list(scrollX = TRUE)
+        options = list(scrollX = TRUE,pageLength = 5)
         
         )
   })
@@ -200,7 +256,7 @@ server <- shinyServer(
       datatable(
         {
           load_data_makemeals()
-        },options = list(scrollX = TRUE, columnDefs = list(list(width = '200px', targets = "c(1)")),searchHighlight = TRUE,pageLength = 10,initComplete = JS(
+        },options = list(scrollX = TRUE, columnDefs = list(list(width = '200px', targets = "c(1)")),searchHighlight = TRUE,pageLength = 5,initComplete = JS(
           "function(settings, json) {",
           "$(this.api().table().header()).css({'background-color': 'black', 'color': 'white'});",
           "}")), class="stripe compact nowrap", rownames = FALSE
@@ -225,6 +281,17 @@ server <- shinyServer(
         
         
     }) 
+    
+    output$auditmeals = renderDataTable({
+      datatable(
+        {
+          load_data_auditmeals()
+        },options = list(scrollX = TRUE, columnDefs = list(list(width = '200px', targets = "c(1)")),searchHighlight = TRUE,pageLength = 5,initComplete = JS(
+          "function(settings, json) {",
+          "$(this.api().table().header()).css({'background-color': 'black', 'color': 'white'});",
+          "}")), class="stripe compact nowrap", rownames = FALSE
+        
+      )})
     
     
     
