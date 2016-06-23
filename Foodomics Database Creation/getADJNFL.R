@@ -13,7 +13,7 @@
 ###############################################
 #####ALTER DATA TYPE AND REMOVE SUPPLEMENTS####
 ###############################################
-
+              
               #Convert numeric columns to type numeric in compiled historical nutrition facts database
               compiledNFD[,c(12:96, 114:241)] <- sapply(compiledNFD[,c(12:96, 114:241)], as.numeric)
               
@@ -70,7 +70,7 @@
               UCURdb$CHOdec<- ifelse(UCURdb$CHObyCAL>UCURdb$CHObyWEIGHT,UCURdb$CHObyCAL,UCURdb$CHObyWEIGHT)
               UCURdb$CHOdec<- ifelse(UCURdb$CHOdec>100,100,UCURdb$CHOdec)
               
-              #DEFINE FACTOR (VALUE ON NFL DIVIDED BY VALUE IN USDA)
+              #DEFINE FACTOR (VALUE ON NFL DIVIDED BY VALUE IN USDA) --- may not need
               UCURdb$Fat_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`),UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`,1))  #this should be fat from label
               UCURdb$PRO_conv<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Protein_per_serving_g/UCURdb$`X203`),UCURdb$Protein_per_serving_g/UCURdb$`X203`,1))   #this should be pro frmo label
               UCURdb$CHO_conv<-ifelse(UCURdb$CHOdec=="0",0,ifelse(!is.na(UCURdb$CHOdec/UCURdb$CHOdec2), UCURdb$CHOdec/UCURdb$CHOdec2,1)) #this should be adjusted carbohydate
@@ -128,8 +128,6 @@
               ################
               #FAT CONVERSIONS
               ################
-              
-              #
               source("foodomics_recalc.r")
               
               #CHAIN LENGTH
@@ -264,7 +262,7 @@
              source("getSUPPLEMENTS.R")
              write.csv(UCURdb, file="UCURdb.csv")
 
-              foodomics<-UCURdb[ , c(1:8,97:100, 399:565) ]
+              foodomics<-UCURdb[ , c(1:8,97:100, 400:562) ]
               
               #Put supplements back into the main database
               library(gtools)

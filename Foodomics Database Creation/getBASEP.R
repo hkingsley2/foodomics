@@ -58,13 +58,13 @@
               
               #(6)
               #multiply values by weighting factor
-              preSCALING[,c(7:160)]<-preSCALING[,c(7:160)] * preSCALING[,c(5)]
+              preSCALING[,c(8:161)]<-preSCALING[,c(8:161)] * preSCALING[,c(5)]
               
               #(7) 
               #Now, we need to sum the data for the representative products for each NDID that they belong to
               #Sum the data in preSCALING PER PRODUCT except where values are NA then just use value
               #First get rid of columns that we don't need
-              preSCALING2<-preSCALING[,c(2,7:156,160)]
+              preSCALING2<-preSCALING[,c(2,8:157,160:161)]
               library(magrittr)
               library(dplyr)
               referenceBASEP<- preSCALING2 %>% group_by(PRODUCTNDID) %>% summarise_each(funs(sum))
