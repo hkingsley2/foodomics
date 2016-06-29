@@ -1,15 +1,9 @@
-####Creates MAKE_MEALS Dataset
-
-#1) Download USDA database
-#2) Query for foods and nutrient values and save as .xlsx file, then as csv
-#3) Replace missing values by the word NULL
-#4) Upload data into this table
-
 #Create Table Functions
+DROP TABLE borum_practice.refprofiles;
+
 use borum_practice;
-create table USDA(
-NDB_No	VARCHAR (10),
-Shrt_Desc	VARCHAR (120),
+create table refprofiles(
+PRODUCTNDID	VARCHAR (10),
 `203`	DEC(10,3),
 `204`	DEC(10,3),
 `205`	DEC(10,3),
@@ -159,11 +153,8 @@ Shrt_Desc	VARCHAR (120),
 `856`	DEC(10,3),
 `857`	DEC(10,3),
 `858`	DEC(10,3),
-`859`	DEC(10,3)
+`859`	DEC(10,3),
+`CHOdec`	DEC(10,3),
+`CHOdec2`	DEC(10,3)
 
 );
-
-
-SELECT * FROM borum_practice.USDA;
-DROP TABLE borum_practice.USDA;
-SELECT 

@@ -1,47 +1,66 @@
+#The reference database should be
+#1) USDA products
+#2) USDA modified products (glom products)
+
+#Scripts needed are:
+#  1) Create USDA database//similar to update - one script
+#  2) Read USDA database
+#  3) Update USDA database
+#  4) Delete USDA database
+
+
+#Purpose: This script is used to create a table of primary reference profiles for foodomics calculations.
+
+##For more information on how the usda table was created and uploaded into MySQL, see:
+#CREATE_FOODOMICS.USDA.sql and UPLOAD_FOODOMICS.USDA.sql
+
+#For more information on how the refprofiles table was created in MySQL, see
+#CREATE_FOODOMICS.refprofiles.sql.
+
+
+
+
 #####################
 #####IMPORT FILES####
 #####################
               
-              #(1)
-              #Read in the USDA database
-              setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
-              USDA<-read.csv(file="SR28_PROFILE_DATA.csv", header=TRUE) #import USDA profile data
-              
-              #Update/complete profiles with information that is available on macronutrients
-              setwd("~/GitHub/foodomics/Foodomics Database Creation")
-            
+              #(1) Read in the USDA database
+              USDA<-readfromdatabase("usda")  #comes from foodomics package.
+              #this function queries a table/database for all of the information contained in the USDA table in the foodomics database
+
+              #(2) Adjust the profiles according to observed macronutrient values
               source("getADJUSDA.R")
               
-              #(2)
-              #Read in the USDAweightedNFD
+              #(3) Read in the USDAweightedNFD ---- will be a MySQL table eventually: .link
               setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               USDAweightedNFD <- read.csv(file="USDA BASE PRODUCTS.txt", header=TRUE, sep="\t", stringsAsFactors = FALSE)
-              #Change product (weighting factor) to a numeric value
-              USDAweightedNFD$X.OFPRODUCT<-as.numeric(USDAweightedNFD$X.OFPRODUCT)
+              USDAweightedNFD$X.OFPRODUCT<-as.numeric(USDAweightedNFD$X.OFPRODUCT) #Change product (weighting factor) to a numeric value
               
-              #Make sure that each of the NDIDs in the sheet add up to 1 (view results of ADD)
+              #(4) #Make sure that each of the NDIDs in the sheet add up to 1 (view results of ADD)
               setwd("~/GitHub/foodomics/Foodomics Database Creation/Source Data")
               ADD<- aggregate(USDAweightedNFD$X.OFPRODUCT, by=list(Category=USDAweightedNFD$PRODUCTNDID), FUN=sum)
-              write.csv(ADD, file="CHECKING_BASE_PRODUCTS.csv")
+              
+              #If the sum of any of the weights given to the secondary profiles for a primary product is different than one, you will have to troubleshoot
+              if (any(which(!is.na(ADD) && ADD != 1))) {
+                problemrows<-which(!is.na(ADD) && ADD != 1)
+                print(paste0("You have a problem with the USDA weighted NFD sheet at the following rows: ", problemrows))
+              }
+              
+              #OPTIONAL: write.csv(ADD, file="CHECKING_BASE_PRODUCTS.csv")
 
 ##################################
 #####OBTAIN NDIDS AND PROFILES####
 ##################################
               
-              #(3)
-              #Obtain NDIDs from the USDAweightedNFD sheet
+              #(5) Obtain NDIDs from the USDAweightedNFD sheet
               eatenNDIDs <- unique(USDAweightedNFD$PRODUCTNDID)
               
-              #(4)
-              #Subset the USDAweightedNFD by foods in eatenNDIDs (note that there is a 1:many relationship between eatenNDIDs to USDAweightedNFD, because a patient can eat a food that has multiple USDA base products)
+              #(6) Subset the USDAweightedNFD by foods in eatenNDIDs (note that there is a 1:many relationship between eatenNDIDs to USDAweightedNFD, because a patient can eat a food that has multiple USDA base products)
               condensedUSDAweightedNFD = USDAweightedNFD[USDAweightedNFD$PRODUCTNDID %in% eatenNDIDs, ] 
               #Note: in some cases, the list of eatenNDIDs will just be the NDIDs in the food database being analyzed
               #In that case, you need to obtain the list of NDIDs for the food database you want to analyze
               
-              #condensedUSDAweightedNFD =condensedUSDAweightedNFD[,c(1:4,11)]
-              
-              #(5)
-              #Subset USDA profile database to list of IDS in condensedUSDAweightedNFD
+              #(7) Subset USDA profile database to list of IDS in condensedUSDAweightedNFD
               USDAmod = USDA[USDA$NDB_No %in% condensedUSDAweightedNFD$USDA.ID, ] 
               
               library(plyr)
@@ -49,19 +68,17 @@
               condensedUSDAweightedNFD$NDB_No<-condensedUSDAweightedNFD$USDA.ID
               condensedUSDAweightedNFD<-condensedUSDAweightedNFD[,c(-2)]
               
-              #Merge this database back with the condensed database to have everything in one sheet
+              #(8) #Merge this database back with the condensed database to have everything in one sheet
               preSCALING <- merge(condensedUSDAweightedNFD,USDAmod, by="NDB_No")
 
 ###############################
 #####SCALE AND SUM PROFILES####
 ###############################
               
-              #(6)
-              #multiply values by weighting factor
+              #(9) Multiply values by weighting factor
               preSCALING[,c(8:161)]<-preSCALING[,c(8:161)] * preSCALING[,c(5)]
               
-              #(7) 
-              #Now, we need to sum the data for the representative products for each NDID that they belong to
+              #(10) Now, we need to sum the data for the representative products for each NDID that they belong to
               #Sum the data in preSCALING PER PRODUCT except where values are NA then just use value
               #First get rid of columns that we don't need
               preSCALING2<-preSCALING[,c(2,8:157,160:161)]
@@ -70,7 +87,7 @@
               referenceBASEP<- preSCALING2 %>% group_by(PRODUCTNDID) %>% summarise_each(funs(sum))
 
 ######################################
-#####CONVERT VITAMIN MINERAL UNITS####
+#####CONVERT VITAMIN/MINERAL UNITS####
 ######################################
               
               referenceBASEP$`X313`<-referenceBASEP$`X313`*0.000001
@@ -130,19 +147,26 @@
               referenceBASEP$`X639`<-referenceBASEP$`X639`*0.001
               referenceBASEP$`X641`<-referenceBASEP$`X641`*0.001
               
-              
-              
 #####################
 #####SAVE RESULTS####
 #####################
+             
+              #(11) Deposit primary reference profile information into database
+              names(referenceBASEP) <- gsub("X","",names(referenceBASEP)) #this cleans up column headers
+              referenceBASEP<-data.frame(referenceBASEP) #this makes the data a dataframe
+              uploadtodatabase(referenceBASEP, "refprofiles") #this is a foodomics function that loads the data into a database table
               
-              setwd("~/GitHub/foodomics/Foodomics Database Creation/Output Data")
-              saveRDS(referenceBASEP, file="reference_BASEP.rds")
+              #insert step here to update table with timestamp of each insert
               
-              write.csv(referenceBASEP, file="reference_BASEP.csv")
+             #OPTIONAL: saveRDS(referenceBASEP, file="reference_BASEP.rds")
+             #OPTIONAL: write.csv(referenceBASEP, file="reference_BASEP.csv")
+              
 
-#(8)
+
+              
+              
+              
 #We are finished. Now we have a database of base products that are 
 #found as representative products in our food database (our current 
 #food database, or historical food database, but this could also work 
-#for our patient data)
+#for our patient data).
