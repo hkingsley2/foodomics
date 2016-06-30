@@ -1,7 +1,11 @@
-#getADJUSDA
-#####HERE NEED TO MAKE IT SUCH THAT THE PROFILE DATA ARE ACTUALLY CORRECT (IF FAT IS 0, then all fat sub-classes are 0)
+#getADJUSDA.r
 
-#Calculate Adjusted Carbohydate, remembering that every serving is now 100 grams
+#This script adjusts seed profiles from the USDA table in the foodomics database.
+#Profile data compiled in the USDA National Nutrient database may contain NA 
+#values for sub-class parameters when the measured level of the class is 0. In this case, 
+#a value of 0 is given to all sub-class nutrients when the measured level of the class is 0. 
+
+#Calculate Adjusted Carbohydate, remembering that every serving is 100 grams
 USDA$CHObyCAL <- ((((USDA$`X208`/100)* 100) - (((USDA$`X204`/100)*100)*9) - (((USDA$`X203`/100)*100)*4))/4)
 USDA$CHObyWEIGHT <- ifelse(USDA$`X205`=="0", 0, ((USDA$`X205`/100)*100))
 USDA$CHOdec<- ifelse(USDA$CHObyCAL>USDA$CHObyWEIGHT,USDA$CHObyCAL,USDA$CHObyWEIGHT)
@@ -10,7 +14,7 @@ USDA$CHOdec2<- ifelse(USDA$CHOdec>100,100,USDA$CHOdec)
 ################
 #CHO CONVERSIONS
 ################
-
+#IF CARBOHYDRATE IS ZERO, THEN DATA FOR CARBOHYDRATES SHOULD ALSO BE ZERO
 USDA$`X221`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X221`)
 USDA$`X291`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X291`)
 USDA$`X213`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X213`)
@@ -26,7 +30,7 @@ USDA$`X269`<-ifelse(USDA$CHOdec2=="0",0,USDA$`X269`)
 ################
 #PRO CONVERSIONS
 ################
-
+#IF PROTEIN IS ZERO, THEN DATA FOR AMINO ACIDS SHOULD ALSO BE ZERO
 USDA$`X513`<-ifelse(USDA$`X203`=="0",0,USDA$`X513`)
 USDA$`X511`<-ifelse(USDA$`X203`=="0",0,USDA$`X511`)
 USDA$`X514`<-ifelse(USDA$`X203`=="0",0,USDA$`X514`)
@@ -50,13 +54,14 @@ USDA$`X510`<-ifelse(USDA$`X203`=="0",0,USDA$`X510`)
 ################
 #FAT CONVERSIONS
 ################
-#If NFL DATA FOR A FAT SUB-CLASS ARE AVAILABLE
-#Do we want to adjust their TOTAL MUFA by taking the sum of MUFAs or their total mufa category
+#IF FAT IS ZERO, THEN DATA FOR FAT SUB-CLASSES SHOULD ALSO BE ZERO
 USDA$`X645`<-ifelse(USDA$`X204`=="0",0,USDA$`X645`)
 USDA$`X646`<-ifelse(USDA$`X204`=="0",0,USDA$`X646`)
 USDA$`X606`<-ifelse(USDA$`X204`=="0",0,USDA$`X606`)
 USDA$`X605`<-ifelse(USDA$`X204`=="0",0,USDA$`X605`)
 
+#IF FAT IS ZERO, THEN DATA FOR FAT SUB-CLASSES SHOULD ALSO BE ZERO
+#IF FAT IS NOT ZERO, BUT DATA FOR FAT-SUBCLASSES IS ZERO, THEN DATA FOR FATTY ACIDS SHOULD ALSO BE ZERO
 USDA$`X662`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X605`=="0",0,USDA$`X662`))
 USDA$`X663`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X605`=="0",0,USDA$`X663`))
 USDA$`X859`<-ifelse(USDA$`X204`=="0",0,ifelse(USDA$`X605`=="0",0,USDA$`X859`))
