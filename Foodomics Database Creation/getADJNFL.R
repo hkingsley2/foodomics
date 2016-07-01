@@ -13,7 +13,7 @@
 ###############################################
 #####ALTER DATA TYPE AND REMOVE SUPPLEMENTS####
 ###############################################
-
+              
               #Convert numeric columns to type numeric in compiled historical nutrition facts database
               compiledNFD[,c(12:96, 114:241)] <- sapply(compiledNFD[,c(12:96, 114:241)], as.numeric)
               
@@ -70,7 +70,7 @@
               UCURdb$CHOdec<- ifelse(UCURdb$CHObyCAL>UCURdb$CHObyWEIGHT,UCURdb$CHObyCAL,UCURdb$CHObyWEIGHT)
               UCURdb$CHOdec<- ifelse(UCURdb$CHOdec>100,100,UCURdb$CHOdec)
               
-              #DEFINE FACTOR (VALUE ON NFL DIVIDED BY VALUE IN USDA)
+              #DEFINE FACTOR (VALUE ON NFL DIVIDED BY VALUE IN USDA) --- may not need
               UCURdb$Fat_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`),UCURdb$Total_Fat_per_serving_g/UCURdb$`X204`,1))  #this should be fat from label
               UCURdb$PRO_conv<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Protein_per_serving_g/UCURdb$`X203`),UCURdb$Protein_per_serving_g/UCURdb$`X203`,1))   #this should be pro frmo label
               UCURdb$CHO_conv<-ifelse(UCURdb$CHOdec=="0",0,ifelse(!is.na(UCURdb$CHOdec/UCURdb$CHOdec2), UCURdb$CHOdec/UCURdb$CHOdec2,1)) #this should be adjusted carbohydate
@@ -124,103 +124,11 @@
               UCURdb$FNA_TYR_G<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Tyrosine_per_serving_g),UCURdb$Tyrosine_per_serving_g,UCURdb$PRO_conv*UCURdb$`X509`))
               UCURdb$FNA_VAL_G<-ifelse(UCURdb$Protein_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Valine_per_serving_g),UCURdb$Valine_per_serving_g,UCURdb$PRO_conv*UCURdb$`X510`))
             
+              
               ################
               #FAT CONVERSIONS
               ################
-              
-              #If NFL DATA FOR A FAT SUB-CLASS ARE AVAILABLE
-              #Do we want to adjust their TOTAL MUFA by taking the sum of MUFAs or their total mufa category
-              UCURdb$FNA_FAMS<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Monounsaturated_Fat_per_serving_g),UCURdb$Monounsaturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X645`))
-              UCURdb$FNA_FAPU<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Polyunsaturated_Fat_per_serving_g),UCURdb$Polyunsaturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X646`))
-              UCURdb$FNA_FASAT<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Saturated_Fat_per_serving_g),UCURdb$Saturated_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X606`))
-              UCURdb$FNA_FATRN<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Trans_Fat_per_serving_g),UCURdb$Trans_Fat_per_serving_g,UCURdb$Fat_conv*UCURdb$`X605`))
-              
-              ########NOW CALCULATE THE FATTY ACIDS
-              UCURdb$Poly_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Polyunsaturated_Fat_per_serving_g),UCURdb$Polyunsaturated_Fat_per_serving_g/UCURdb$`X646`,1)) 
-              UCURdb$Mono_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Monounsaturated_Fat_per_serving_g),UCURdb$Monounsaturated_Fat_per_serving_g/UCURdb$`X645`,1)) 
-              UCURdb$Trans_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Trans_Fat_per_serving_g),UCURdb$Trans_Fat_per_serving_g/UCURdb$`X605`,1)) 
-              UCURdb$Sat_conv<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$Saturated_Fat_per_serving_g),UCURdb$Saturated_Fat_per_serving_g/UCURdb$`X606`,1)) 
-              
-              ######SFA
-              UCURdb$FNA_F4D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F4D0_per_serving_g),UCURdb$F4D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X607`),UCURdb$Sat_conv*UCURdb$`X607`,UCURdb$Fat_conv*UCURdb$`X607`)))
-              UCURdb$FNA_F6D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F6D0_per_serving_g),UCURdb$F6D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X608`),UCURdb$Sat_conv*UCURdb$`X608`,UCURdb$Fat_conv*UCURdb$`X608`)))
-              UCURdb$FNA_F8D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F8D0_per_serving_g),UCURdb$F8D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X609`),UCURdb$Sat_conv*UCURdb$`X609`,UCURdb$Fat_conv*UCURdb$`X609`)))
-              UCURdb$FNA_F10D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F10D0_per_serving_g),UCURdb$F10D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X610`),UCURdb$Sat_conv*UCURdb$`X610`,UCURdb$Fat_conv*UCURdb$`X610`)))
-              UCURdb$FNA_F12D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F12D0_per_serving_g),UCURdb$F12D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X611`),UCURdb$Sat_conv*UCURdb$`X611`,UCURdb$Fat_conv*UCURdb$`X611`)))
-              UCURdb$FNA_F13D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F13D0_per_serving_g),UCURdb$F13D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X696`),UCURdb$Sat_conv*UCURdb$`X696`,UCURdb$Fat_conv*UCURdb$`X696`)))
-              UCURdb$FNA_F14D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F14D0_per_serving_g),UCURdb$F14D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X612`),UCURdb$Sat_conv*UCURdb$`X612`,UCURdb$Fat_conv*UCURdb$`X612`)))
-              UCURdb$FNA_F15D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F15D0_per_serving_g),UCURdb$F15D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X652`),UCURdb$Sat_conv*UCURdb$`X652`,UCURdb$Fat_conv*UCURdb$`X652`)))
-              UCURdb$FNA_F16D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D0_per_serving_g),UCURdb$F16D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X613`),UCURdb$Sat_conv*UCURdb$`X613`,UCURdb$Fat_conv*UCURdb$`X613`)))
-              UCURdb$FNA_F17D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F17D0_per_serving_g),UCURdb$F17D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X653`),UCURdb$Sat_conv*UCURdb$`X653`,UCURdb$Fat_conv*UCURdb$`X653`)))
-              UCURdb$FNA_F18D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D0_per_serving_g),UCURdb$F18D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X614`),UCURdb$Sat_conv*UCURdb$`X614`,UCURdb$Fat_conv*UCURdb$`X614`)))
-              UCURdb$FNA_F20D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D0_per_serving_g),UCURdb$F20D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X615`),UCURdb$Sat_conv*UCURdb$`X615`,UCURdb$Fat_conv*UCURdb$`X615`)))
-              UCURdb$FNA_F22D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D0_per_serving_g),UCURdb$F22D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X624`),UCURdb$Sat_conv*UCURdb$`X624`,UCURdb$Fat_conv*UCURdb$`X624`)))
-              UCURdb$FNA_F24D0<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D0_per_serving_g),UCURdb$F24D0_per_serving_g,ifelse(!is.na(UCURdb$Sat_conv*UCURdb$`X654`),UCURdb$Sat_conv*UCURdb$`X654`,UCURdb$Fat_conv*UCURdb$`X654`)))
-           
-              ######MUFA
-              UCURdb$FNA_F14D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F14D1_per_serving_g),UCURdb$F14D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X625`),UCURdb$Mono_conv*UCURdb$`X625`,UCURdb$Fat_conv*UCURdb$`X625`)))
-              UCURdb$FNA_F15D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F15D1_per_serving_g),UCURdb$F15D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X697`),UCURdb$Mono_conv*UCURdb$`X697`,UCURdb$Fat_conv*UCURdb$`X697`)))
-              UCURdb$FNA_F17D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F17D1_per_serving_g),UCURdb$F17D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X687`),UCURdb$Mono_conv*UCURdb$`X687`,UCURdb$Fat_conv*UCURdb$`X687`)))
-              UCURdb$FNA_F20D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D1_per_serving_g),UCURdb$F20D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X628`),UCURdb$Mono_conv*UCURdb$`X628`,UCURdb$Fat_conv*UCURdb$`X628`)))
-              UCURdb$FNA_F16D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D1C_per_serving_g),UCURdb$F16D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X673`),UCURdb$Mono_conv*UCURdb$`X673`,UCURdb$Fat_conv*UCURdb$`X673`)))
-              UCURdb$FNA_F16D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D1_per_serving_g),UCURdb$F16D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X626`),UCURdb$Mono_conv*UCURdb$`X626`,UCURdb$Fat_conv*UCURdb$`X626`)))
-              UCURdb$FNA_F18D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1C_per_serving_g),UCURdb$F18D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X674`),UCURdb$Mono_conv*UCURdb$`X674`,UCURdb$Fat_conv*UCURdb$`X674`)))
-              UCURdb$FNA_F18D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1_per_serving_g),UCURdb$F18D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X617`),UCURdb$Mono_conv*UCURdb$`X617`,UCURdb$Fat_conv*UCURdb$`X617`)))
-              UCURdb$FNA_F22D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1C_per_serving_g),UCURdb$F22D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X676`),UCURdb$Mono_conv*UCURdb$`X676`,UCURdb$Fat_conv*UCURdb$`X676`)))
-              UCURdb$FNA_F22D1<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1_per_serving_g),UCURdb$F22D1_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X630`),UCURdb$Mono_conv*UCURdb$`X630`,UCURdb$Fat_conv*UCURdb$`X630`)))
-              UCURdb$FNA_F24D1C<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F24D1C_per_serving_g),UCURdb$F24D1C_per_serving_g,ifelse(!is.na(UCURdb$Mono_conv*UCURdb$`X671`),UCURdb$Mono_conv*UCURdb$`X671`,UCURdb$Fat_conv*UCURdb$`X671`)))
-            
-              ######PUFA
-              UCURdb$FNA_F18D4<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D4_per_serving_g),UCURdb$F18D4_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X627`),UCURdb$Poly_conv*UCURdb$`X627`,UCURdb$Fat_conv*UCURdb$`X627`)))
-              UCURdb$FNA_F21D5<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F21D5_per_serving_g),UCURdb$F21D5_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X857`),UCURdb$Poly_conv*UCURdb$`X857`,UCURdb$Fat_conv*UCURdb$`X857`)))
-              UCURdb$FNA_F22D4<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D4_per_serving_g),UCURdb$F22D4_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X858`),UCURdb$Poly_conv*UCURdb$`X858`,UCURdb$Fat_conv*UCURdb$`X858`)))
-              UCURdb$FNA_F18D2<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$LA_per_serving_g),UCURdb$LA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X618`),UCURdb$Poly_conv*UCURdb$`X618`,UCURdb$Fat_conv*UCURdb$`X618`)))
-              UCURdb$FNA_F18D3CN3<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D3CN3_per_serving_g),UCURdb$F18D3CN3_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X851`),UCURdb$Poly_conv*UCURdb$`X851`,UCURdb$Fat_conv*UCURdb$`X851`)))
-              UCURdb$FNA_F18D3CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D3CN6_per_serving_g),UCURdb$F18D3CN6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X685`),UCURdb$Poly_conv*UCURdb$`X685`,UCURdb$Fat_conv*UCURdb$`X685`)))
-              UCURdb$FNA_F18D3<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$ALA_per_serving_g),UCURdb$ALA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X619`),UCURdb$Poly_conv*UCURdb$`X619`,UCURdb$Fat_conv*UCURdb$`X619`)))
-              UCURdb$FNA_F20D2CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D2CN6_per_serving_g),UCURdb$F20D2CN6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X672`),UCURdb$Poly_conv*UCURdb$`X672`,UCURdb$Fat_conv*UCURdb$`X672`)))
-              UCURdb$FNA_F20D3N3<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D3N3_per_serving_g),UCURdb$F20D3N3_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X852`),UCURdb$Poly_conv*UCURdb$`X852`,UCURdb$Fat_conv*UCURdb$`X852`)))
-              UCURdb$FNA_F20D3N6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D3N6_per_serving_g),UCURdb$F20D3N6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X853`),UCURdb$Poly_conv*UCURdb$`X853`,UCURdb$Fat_conv*UCURdb$`X853`)))
-              UCURdb$FNA_F20D3<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D3_per_serving_g),UCURdb$F20D3_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X689`),UCURdb$Poly_conv*UCURdb$`X689`,UCURdb$Fat_conv*UCURdb$`X689`)))
-              UCURdb$FNA_F20D4N6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$ARA_per_serving_g),UCURdb$ARA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X855`),UCURdb$Poly_conv*UCURdb$`X855`,UCURdb$Fat_conv*UCURdb$`X855`)))
-              UCURdb$FNA_F20D4<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F20D4_per_serving_g),UCURdb$F20D4_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X620`),UCURdb$Poly_conv*UCURdb$`X620`,UCURdb$Fat_conv*UCURdb$`X620`)))
-              UCURdb$FNA_F20D5<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$EPA_per_serving_g),UCURdb$EPA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X629`),UCURdb$Poly_conv*UCURdb$`X629`,UCURdb$Fat_conv*UCURdb$`X629`)))
-              UCURdb$FNA_F22D5<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D5_per_serving_g),UCURdb$F22D5_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X631`),UCURdb$Poly_conv*UCURdb$`X631`,UCURdb$Fat_conv*UCURdb$`X631`)))
-              UCURdb$FNA_F22D6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$DHA_per_serving_g),UCURdb$DHA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X621`),UCURdb$Poly_conv*UCURdb$`X621`,UCURdb$Fat_conv*UCURdb$`X621`)))
-                     
-              UCURdb$FNA_F183I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F183I_per_serving_g),UCURdb$F183I_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X856`),UCURdb$Poly_conv*UCURdb$`X856`,UCURdb$Fat_conv*UCURdb$`X856`)))
-              UCURdb$FNA_F182I<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F182I_per_serving_g),UCURdb$F182I_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X666`),UCURdb$Poly_conv*UCURdb$`X666`,UCURdb$Fat_conv*UCURdb$`X666`)))
-              UCURdb$FNA_F18D2CN6<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CN6_per_serving_g),UCURdb$F18D2CN6_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X675`),UCURdb$Poly_conv*UCURdb$`X675`,UCURdb$Fat_conv*UCURdb$`X675`)))
-              UCURdb$FNA_F18D2CLA<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2CLA_per_serving_g),UCURdb$F18D2CLA_per_serving_g,ifelse(!is.na(UCURdb$Poly_conv*UCURdb$`X670`),UCURdb$Poly_conv*UCURdb$`X670`,UCURdb$Fat_conv*UCURdb$`X670`)))
-              
-              ######TRANS
-              UCURdb$FNA_F16D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F16D1T_per_serving_g),UCURdb$F16D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X662`),UCURdb$Trans_conv*UCURdb$`X662`,UCURdb$Fat_conv*UCURdb$`X662`)))
-              UCURdb$FNA_F18D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1T_per_serving_g),UCURdb$F18D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X663`),UCURdb$Trans_conv*UCURdb$`X663`,UCURdb$Fat_conv*UCURdb$`X663`)))
-              UCURdb$FNA_F18D1TN7<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D1TN7_per_serving_g),UCURdb$F18D1TN7_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X859`),UCURdb$Trans_conv*UCURdb$`X859`,UCURdb$Fat_conv*UCURdb$`X859`)))
-              UCURdb$FNA_F18D2X<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2X_per_serving_g),UCURdb$F18D2X_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X665`),UCURdb$Trans_conv*UCURdb$`X665`,UCURdb$Fat_conv*UCURdb$`X665`)))
-              UCURdb$FNA_F18D2TT<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F18D2TT_per_serving_g),UCURdb$F18D2TT_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X669`),UCURdb$Trans_conv*UCURdb$`X669`,UCURdb$Fat_conv*UCURdb$`X669`)))
-              UCURdb$FNA_F22D1T<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$F22D1T_per_serving_g),UCURdb$F22D1T_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X664`),UCURdb$Trans_conv*UCURdb$`X664`,UCURdb$Fat_conv*UCURdb$`X664`)))
-              UCURdb$FNA_FATRNM<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNM_per_serving_g),UCURdb$FATRNM_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X693`),UCURdb$Trans_conv*UCURdb$`X693`,UCURdb$Fat_conv*UCURdb$`X693`)))
-              UCURdb$FNA_FATRNP<-ifelse(UCURdb$Total_Fat_per_serving_g=="0",0,ifelse(!is.na(UCURdb$FATRNP_per_serving_g),UCURdb$FATRNP_per_serving_g,ifelse(!is.na(UCURdb$Trans_conv*UCURdb$`X695`),UCURdb$Trans_conv*UCURdb$`X695`,UCURdb$Fat_conv*UCURdb$`X695`)))
-                            
-              
-              #OTHER COLUMNS
-              UCURdb$FNA_F16D1_OTHER<-UCURdb$FNA_F16D1-apply(cbind(UCURdb$FNA_F16D1C,UCURdb$FNA_F16D1T),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F16D1_OTHER<-ifelse(UCURdb$FNA_F16D1_OTHER<0,0,UCURdb$FNA_F16D1_OTHER)
-              UCURdb$FNA_F18D1_OTHER<-UCURdb$FNA_F18D1-apply(cbind(UCURdb$FNA_F18D1C,UCURdb$FNA_F18D1T),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F18D1_OTHER<-ifelse(UCURdb$FNA_F18D1_OTHER<0,0,UCURdb$FNA_F18D1_OTHER)
-              UCURdb$FNA_F18D2_OTHER<-UCURdb$FNA_F18D2-apply(cbind(UCURdb$FNA_F18D2CLA,UCURdb$FNA_F182I,UCURdb$FNA_F18D2CN6,UCURdb$FNA_F18D2X,UCURdb$FNA_F18D2TT),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F18D2_OTHER<-ifelse( UCURdb$FNA_F18D2_OTHER<0,0, UCURdb$FNA_F18D2_OTHER)
-              UCURdb$FNA_F18D3_OTHER<-UCURdb$FNA_F18D3-apply(cbind(UCURdb$FNA_F18D3CN3,UCURdb$FNA_F18D3CN6,UCURdb$FNA_F183I),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F18D3_OTHER<-ifelse(UCURdb$FNA_F18D3_OTHER<0,0,UCURdb$FNA_F18D3_OTHER)
-              UCURdb$FNA_F20D3_OTHER<-UCURdb$FNA_F20D3-apply(cbind(UCURdb$FNA_F20D3N3,UCURdb$FNA_F20D3N6),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F20D3_OTHER<-ifelse(UCURdb$FNA_F20D3_OTHER<0,0,UCURdb$FNA_F20D3_OTHER)
-              UCURdb$FNA_F20D4_OTHER<-UCURdb$FNA_F20D4-UCURdb$FNA_F20D4N6
-              UCURdb$FNA_F20D4_OTHER<-ifelse(UCURdb$FNA_F20D4_OTHER<0,0,UCURdb$FNA_F20D4_OTHER)
-              UCURdb$FNA_F22D1_OTHER<-UCURdb$FNA_F22D1-apply(cbind(UCURdb$FNA_F22D1C,UCURdb$FNA_F22D1T),1,sum,na.rm = TRUE)
-              UCURdb$FNA_F22D1_OTHER<-ifelse(UCURdb$FNA_F22D1_OTHER<0,0,UCURdb$FNA_F22D1_OTHER)
-              UCURdb$FNA_FAT_OTHER<-UCURdb$FNA_FAT-apply(cbind(UCURdb$FNA_F18D2CLA,UCURdb$FNA_F182I,UCURdb$FNA_F18D2CN6,UCURdb$FNA_F18D2X,UCURdb$FNA_F18D2TT, UCURdb$FNA_F18D3CN3,UCURdb$FNA_F18CN6,UCURdb$FNA_F183I, UCURdb$FNA_F16D1C,UCURdb$FNA_F16D1T , UCURdb$FNA_F18D1C,UCURdb$FNA_F18D1T , UCURdb$FNA_F20D3N3,UCURdb$FNA_F20D3N6, UCURdb$FNA_F20D4N6, UCURdb$FNA_F22D1C,UCURdb$FNA_F22D1T ,UCURdb$FNA_F16D1_OTHER,UCURdb$FNA_F18D1_OTHER,UCURdb$FNA_F18D2_OTHER, UCURdb$FNA_F18D3_OTHER,UCURdb$FNA_F20D3_OTHER,UCURdb$FNA_F20D4_OTHER,UCURdb$FNA_F22D1_OTHER),1,sum,na.rm = TRUE)
-              UCURdb$FNA_FAT_OTHER<-ifelse(UCURdb$FNA_FAT_OTHER<0,0,UCURdb$FNA_FAT_OTHER)
+              source("foodomics_recalc.r")
               
               #CHAIN LENGTH
               UCURdb$FNA_FAT_SHORT<-apply(cbind(UCURdb$FNA_F4D0,UCURdb$FNA_F6D0),1,sum,na.rm = TRUE)
@@ -354,7 +262,7 @@
              source("getSUPPLEMENTS.R")
              write.csv(UCURdb, file="UCURdb.csv")
 
-              foodomics<-UCURdb[ , c(1:8,97:100, 399:565) ]
+              foodomics<-UCURdb[ , c(1:8,97:100, 400:562) ]
               
               #Put supplements back into the main database
               library(gtools)

@@ -15,7 +15,7 @@ USDAweightedNFD <- read.csv(file="USDA BASE PRODUCTS.txt", header=TRUE, sep="\t"
 #Change product (weighting factor) to a numeric value
 USDAweightedNFD$PRODUCTNDID<-USDAweightedNFD$NDID.FOR.USDA.PRODUCTS
 USDAweightedNFD$NDB_No<-USDAweightedNFD$USDA.ID
-neededUSDA<-USDAweightedNFD[,c(1,6)]
+neededUSDA<-USDAweightedNFD[,c(1,7)]
 
 #(3) Merge USDA DB with the weighted part
 eatenUSDAfoods <- unique(merge(neededUSDA, USDA, by="NDB_No"))
